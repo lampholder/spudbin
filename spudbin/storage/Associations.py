@@ -55,8 +55,8 @@ class Associations(Store):
             self._connection.commit()
         else:
             association_to_modify = [x for x in associations
-                                     if x['start_date'] < association.start_date
-                                     and x['end_date'] > association.start_date][0]
+                                     if x.start_date < association.start_date
+                                     and x.end_date > association.start_date][0]
             association_to_modify.end_date = association.start_date
             self.update(association_to_modify)
 
