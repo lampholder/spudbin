@@ -18,6 +18,12 @@ TEMPLATES = Templates(CONNECTION)
 ASSOCIATIONS = Associations(CONNECTION)
 RECORDS = Records(CONNECTION)
 
+def filter_keys(dic, keys):
+    filtered = dict(dic)
+    for key in keys:
+        del filtered[key]
+    return filtered
+
 # Templates:
 @app.route('/templates', methods=['GET'])
 def get_templates():
@@ -36,11 +42,6 @@ def create_template():
 def get_template_by_id(template_id):
     return jsonify(TEMPLATES.fetch_by_pkey(template_id)._asdict())
 
-def filter_keys(dic, keys):
-    filtered = dict(dic)
-    for key in keys:
-        del filtered[key]
-    return filtered
 
 # User templates:
 @app.route('/<string:user>/templates', methods=['GET'])
@@ -64,19 +65,12 @@ def assign_template_for_user(user, template_id):
 
 @app.route("/<string:user>/templates/<date:date>", methods=['GET'])
 def get_template_by_human_date(user, date):
-    return jsonify(user=user,
-                   date=date,
-                   template={'id': 1,
-                             'maxTokens': 8,
-                             'buckets':[{'bucket': 'working',
-                                         'tags': ['good'],
-                                         'description': 'working hard, yeah'},
-                                        {'bucket': 'slacking',
-                                         'tags': ['bad'],
-                                         'description': 'mooching around, wasting time'}]
-                            }
-                  )
-
+    human = HUMANS.fetch_by_login(user)
+    associations = ASSOCIATIONS.fetch_by_human(human)
+    return jsonify(filter_keys([x for x in associations
+                                if x.start_date <= date
+                                and x.end_date > date][0].template._asdict(),
+                               ['human']))
 
 # Tokens:
 @app.route("/<string:user>/tokens/<date:date>", methods=['POST'])
