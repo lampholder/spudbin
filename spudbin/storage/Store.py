@@ -34,13 +34,13 @@ class Store(object):
     def fetch_by_pkey(self, pkey):
         cursor = self._connection.cursor()
         sql = 'select * from %s where pkey = ?' % self.table_name
-        row = cursor.execute(sql, (pkey, ))
+        cursor.execute(sql, (pkey, ))
         return self.one_or_none(cursor)
 
-    def delete(self, entity):
+    def delete_by_pkey(self, pkey):
         cursor = self._connection.cursor()
         sql = 'delete from %s where pkey = ?' % self.table_name
-        cursor.execute(sql, (entity.pkey,))
+        cursor.execute(sql, (pkey,))
         self._connection.commit()
         cursor.close()
 

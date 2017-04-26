@@ -32,6 +32,13 @@ class Humans(Store):
         cursor.execute(sql, (login, ))
         return self.one_or_none(cursor)
 
+    def delete_by_login(self, login):
+        cursor = self._connection.cursor()
+        sql = 'delete from %s where login = ?' % self.table_name
+        cursor.execute(sql, (login,))
+        self._connection.commit()
+        cursor.close()
+
     def create(self, human):
         cursor = self._connection.cursor()
         sql = 'insert into humans(pkey, login, access_token) values (?,?,?)'
