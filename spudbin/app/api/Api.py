@@ -47,7 +47,11 @@ def assign_template_for_user(user, template_id):
     human = HUMANS.fetch_by_login(user)
     template = TEMPLATES.fetch_by_pkey(template_id)
 
-    ASSOCIATIONS.allocate_to_human(human, template, start_date)
+    ASSOCIATIONS.create(Association(pkey=None,
+                                    human=human,
+                                    template=template,
+                                    start_date=start_date,
+                                    end_date=None))
     return 'OKAY'
 
 @app.route("/<string:user>/templates/<date:date>", methods=['GET'])
