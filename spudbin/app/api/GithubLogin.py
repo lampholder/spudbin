@@ -9,7 +9,7 @@ from flask import current_app
 from spudbin.storage import Database
 from spudbin.storage import Humans, Human
 
-app = current_app()
+from spudbin.app import app
 
 humans = Humans(Database.connection())
 state_tracker = []

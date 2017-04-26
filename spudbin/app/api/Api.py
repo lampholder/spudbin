@@ -7,6 +7,8 @@ import uuid
 from datetime import datetime
 from werkzeug.routing import BaseConverter, ValidationError
 
+from spudbin.app import app
+
 class DateConverter(BaseConverter):
     """Extracts a ISO8601 date from the path and validates it."""
 
@@ -20,8 +22,6 @@ class DateConverter(BaseConverter):
 
     def to_url(self, value):
         return value.strftime('%Y-%m-%d')
-
-app = current_app()
 
 app.url_map.converters['date'] = DateConverter
 
