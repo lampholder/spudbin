@@ -37,7 +37,7 @@ def create_template():
     row_id = TEMPLATES.create(Template(pkey=None,
                                        template=request.get_json(),
                                        enabled=True))
-    return jsonify(TEMPLATES.fetch_by_pkey(row_id))
+    return jsonify(TEMPLATES.fetch_by_pkey(row_id).asdict())
 
 @app.route("/template/<int:template_id>", methods=['GET'])
 def get_template_by_id(template_id):
