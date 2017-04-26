@@ -53,7 +53,6 @@ class Records(Store):
         cursor.close()
 
     def create(self, record):
-        self.delete_by_human_date(record.human, record.date)
         cursor = self._connection.cursor()
         sql = 'insert into records(human_pkey, date, template_pkey, code, tokens) ' + \
               'values (?,?,?,?,?)'
