@@ -1,3 +1,5 @@
+import json
+
 from flask import jsonify
 from flask import request
 
@@ -32,7 +34,7 @@ def get_template(user, date):
 @app.route("/template", methods=['POST'])
 def create_template():
     row_id = TEMPLATES.create(Template(pkey=None,
-                                       template=request.get_json(),
+                                       template=json.dumps(request.get_json()),
                                        enabled=True))
     return jsonify(TEMPLATES.fetch_by_pkey(row_id))
 
