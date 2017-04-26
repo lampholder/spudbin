@@ -85,6 +85,7 @@ def submit_tokens(user, date):
 
     buckets = request.get_json()['buckets']
     for allocation in buckets:
+        print 'Submitting allocation', allocation
 
         record = Record(human=human,
                         date=date,
@@ -93,7 +94,7 @@ def submit_tokens(user, date):
                         tokens=allocation['tokens'])
         RECORDS.create(record)
 
-    return jsonify(list(RECORDS.fetch_by_human_date(human, date)))
+    return jsonify([x._asdict() for x in RECORDS.fetch_by_human_date(human, date)])
 
 @app.route("/<string:user>/tokens/<date:date>", methods=['GET'])
 def get_tokens(user, date):
