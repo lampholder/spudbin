@@ -33,6 +33,16 @@ class Templates(Store):
                         template=row['template'],
                         enabled=row['enabled'] == 1)
 
+    @staticmethod
+    def validate(json):
+        return 'maxTokens' in json \
+           and isinstance(json['maxTokens'], int) \
+           and json['maxTokens'] > 0 \
+           and 'buckets' in json \
+           and isinstance(json['buckets'], list) \
+           and len(json['buckets'] > 0) \
+           and len(filter(lambda x: 'bucket' not in x, json['buckets'])) == 0
+
     def create(self, template):
         cursor = self._connection.cursor()
         sql = 'insert into templates(pkey, template, enabled) values (?,?,?)'

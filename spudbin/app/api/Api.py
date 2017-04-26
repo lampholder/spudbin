@@ -34,6 +34,8 @@ def get_template_by_human_date(user, date):
 # Templates:
 @app.route("/template", methods=['POST'])
 def create_template():
+    if not Templates.validate(request.get_json()):
+        return 'Invalid template object', 400
     row_id = TEMPLATES.create(Template(pkey=None,
                                        template=json.dumps(request.get_json()),
                                        enabled=True))
