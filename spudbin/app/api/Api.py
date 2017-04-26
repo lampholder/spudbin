@@ -83,7 +83,7 @@ def submit_tokens(user, date):
     # We should validate somet of this stuffs! Like the total count and the buckets being in
     # the template!
 
-    buckets = request.get_json()
+    buckets = request.get_json()['buckets']
     for allocation in buckets:
 
         record = Record(human=human,
