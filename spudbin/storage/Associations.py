@@ -39,7 +39,7 @@ class Associations(Store):
         print 'asked to update to ', association
         cursor = self._connection.cursor()
         sql = 'update human_templates set start_date = ?, end_date = ? where pkey = ?'
-        cursor.execute(sql, (association.pkey, association.start_date, association.end_date, ))
+        cursor.execute(sql, (association.start_date, association.end_date, association.pkey, ))
         self._connection.commit()
         cursor.close()
 
