@@ -17,7 +17,7 @@ TEMPLATES = Templates(CONNECTION)
 RECORDS = Records(CONNECTION)
 
 @app.route("/template/<string:user>/<date:date>", methods=['GET'])
-def get_template(user, date):
+def get_template_by_human_date(user, date):
     return jsonify(user=user,
                    date=date,
                    template={'id': 1,
@@ -31,6 +31,7 @@ def get_template(user, date):
                             }
                   )
 
+# Templates:
 @app.route("/template", methods=['POST'])
 def create_template():
     row_id = TEMPLATES.create(Template(pkey=None,
@@ -38,10 +39,12 @@ def create_template():
                                        enabled=True))
     return jsonify(TEMPLATES.fetch_by_pkey(row_id))
 
-@app.route("/tokens/<string:user>/<date:date>", methods=['GET'])
-def get_tokens(user, date):
-    return 'OKAY'
+@app.route("/template/<integer:id>", methods=['GET'])
+def get_template_by_id(template_id):
+    return jsonify(TEMPLATES.fetch_by_pkey(template_id))
 
+
+# Tokens:
 @app.route("/tokens/<string:user>/<date:date>", methods=['POST'])
 def submit_tokens(user, date):
     human = HUMANS.fetch_by_login(user)
@@ -56,3 +59,9 @@ def submit_tokens(user, date):
                     tokens=4)
     RECORDS.create(record)
     return 'OKAY'
+
+@app.route("/tokens/<string:user>/<date:date>", methods=['GET'])
+def get_tokens(user, date):
+    return 'OKAY'
+
+
