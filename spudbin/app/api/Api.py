@@ -46,6 +46,7 @@ def assign_template_for_user(user, template_id):
     template = TEMPLATES.fetch_by_pkey(template_id)
 
     TEMPLATES.allocate_to_human(human, template, start_date)
+    return 'OKAY'
 
 @app.route("/<string:user>/templates/<date:date>", methods=['GET'])
 def get_template_by_human_date(user, date):
