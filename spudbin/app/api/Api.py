@@ -39,7 +39,7 @@ def create_template():
                                        enabled=True))
     return jsonify(TEMPLATES.fetch_by_pkey(row_id))
 
-@app.route("/template/<int:id>", methods=['GET'])
+@app.route("/template/<int:template_id>", methods=['GET'])
 def get_template_by_id(template_id):
     return jsonify(TEMPLATES.fetch_by_pkey(template_id))
 
