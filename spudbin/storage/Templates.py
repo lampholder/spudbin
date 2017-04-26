@@ -66,7 +66,7 @@ class Templates(Store):
             cursor = self._connection.cursor()
             sql = 'insert into human_templates(human_pkey, template_pkey, start_date, end_date) ' + \
                   'values (?,?,?,?)'
-            cursor.execute(sql, (human.pkey, template.pkey, '0000-01-01', '9000-01-01'))
+            cursor.execute(sql, (human.pkey, template.pkey, '0001-01-01', '9000-01-01'))
             self._connection.commit()
         else:
             template_to_modify = [x for x in templates
