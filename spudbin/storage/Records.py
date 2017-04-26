@@ -47,7 +47,7 @@ class Records(Store):
 
     def delete_by_human_date(self, human, date):
         cursor = self._connection.cursor()
-        sql = 'delete from %s where human = ? and date = ?' % self.table_name
+        sql = 'delete from %s where human_pkey = ? and date = ?' % self.table_name
         cursor.execute(sql, (human.pkey, datetime.datetime.strftime(date, '%Y-%m-%d'),))
         self._connection.commit()
         cursor.close()
