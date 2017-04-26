@@ -3,14 +3,11 @@ import uuid
 import requests
 
 from flask import Flask
-from flask import jsonify
 from flask import redirect
 from flask import request
 
 from spudbin.storage import Database
 from spudbin.storage import Humans, Human
-
-app = Flask('spudbin')
 
 humans = Humans(Database.connection())
 state_tracker = []
