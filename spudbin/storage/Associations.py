@@ -53,7 +53,7 @@ class Associations(Store):
                   'end_date) values (?,?,?,?)'
             cursor.execute(sql, (association.human.pkey,
                                  association.template.pkey,
-                                 '0001-01-01',
+                                 '1900-01-01',
                                  '9000-01-01'))
             self._connection.commit()
         else:
