@@ -1,3 +1,4 @@
+import json
 import datetime
 from collections import namedtuple
 from spudbin.storage import Store
@@ -30,23 +31,23 @@ class Templates(Store):
 
     def row_to_entity(self, row):
         return Template(pkey=row['pkey'],
-                        template=row['template'],
+                        template=json.loads(row['template']),
                         enabled=row['enabled'] == 1)
 
     @staticmethod
-    def validate(json):
-        return 'maxTokens' in json \
-           and isinstance(json['maxTokens'], int) \
-           and json['maxTokens'] > 0 \
-           and 'buckets' in json \
-           and isinstance(json['buckets'], list) \
-           and len(json['buckets']) > 0 \
-           and len(filter(lambda x: 'bucket' not in x, json['buckets'])) == 0
+    def validate_json_template(template):
+        return 'maxTokens' in template \
+           and isinstance(template['maxTokens'], int) \
+           and template['maxTokens'] > 0 \
+           and 'buckets' in template \
+           and isinstance(template['buckets'], list) \
+           and len(template['buckets']) > 0 \
+           and len(filter(lambda x: 'bucket' not in x, template['buckets'])) == 0
 
     def create(self, template):
         cursor = self._connection.cursor()
         sql = 'insert into templates(pkey, template, enabled) values (?,?,?)'
-        cursor.execute(sql, (template.pkey, template.template, 1 if template.enabled else 0,))
+        cursor.execute(sql, (template.pkey, json.dumps(template.template), 1 if template.enabled else 0,))
         self._connection.commit()
         insert_id = cursor.lastrowid
         cursor.close()

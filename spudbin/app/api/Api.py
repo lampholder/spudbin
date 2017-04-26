@@ -1,5 +1,3 @@
-import json
-
 from flask import jsonify
 from flask import request
 
@@ -37,7 +35,7 @@ def create_template():
     if not Templates.validate(request.get_json()):
         return 'Invalid template object', 400
     row_id = TEMPLATES.create(Template(pkey=None,
-                                       template=json.dumps(request.get_json()),
+                                       template=request.get_json(),
                                        enabled=True))
     return jsonify(TEMPLATES.fetch_by_pkey(row_id))
 
