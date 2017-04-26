@@ -70,8 +70,8 @@ class Associations(Store):
 
     def fetch_by_human(self, human):
         cursor = self._connection.cursor()
-        sql = 'select pkey, template_pkey, start_date, end_date from human_templates' + \
-              ' where human_pkey = ?'
+        sql = 'select pkey, human_pkey, template_pkey, start_date, end_date ' + \
+              'from human_templates where human_pkey = ?'
         cursor.execute(sql, (human.pkey, ))
         rows = cursor.fetchall()
         cursor.close()
