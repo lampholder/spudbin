@@ -15,21 +15,6 @@ TEMPLATES = Templates(CONNECTION)
 RECORDS = Records(CONNECTION)
 
 # Templates:
-@app.route("/<string:user>/templates/<date:date>", methods=['GET'])
-def get_template_by_human_date(user, date):
-    return jsonify(user=user,
-                   date=date,
-                   template={'id': 1,
-                             'maxTokens': 8,
-                             'buckets':[{'bucket': 'working',
-                                         'tags': ['good'],
-                                         'description': 'working hard, yeah'},
-                                        {'bucket': 'slacking',
-                                         'tags': ['bad'],
-                                         'description': 'mooching around, wasting time'}]
-                            }
-                  )
-
 @app.route('/templates', methods=['GET'])
 def get_templates():
     return jsonify([x._asdict() for x in TEMPLATES.all()])
@@ -46,6 +31,36 @@ def create_template():
 @app.route("/templates/<int:template_id>", methods=['GET'])
 def get_template_by_id(template_id):
     return jsonify(TEMPLATES.fetch_by_pkey(template_id)._asdict())
+
+
+# User templates:
+@app.route('/<string:user>/templates', methods=['GET'])
+def get_templates_for_user(user):
+    return jsonify([x._asdict() for x in TEMPLATES.fetch_by_human(user)])
+
+@app.route('/<string:user>/templates/<int:template_id>', methods=['POST'])
+def assign_template_for_user(user, template_id):
+    start_date = request.get_json['startDate']
+    human = HUMANS.fetch_by_login(user)
+    template = TEMPLATES.fetch_by_pkey(template_id)
+
+    TEMPLATES.allocate_to_human(human, template, start_date)
+
+@app.route("/<string:user>/templates/<date:date>", methods=['GET'])
+def get_template_by_human_date(user, date):
+    return jsonify(user=user,
+                   date=date,
+                   template={'id': 1,
+                             'maxTokens': 8,
+                             'buckets':[{'bucket': 'working',
+                                         'tags': ['good'],
+                                         'description': 'working hard, yeah'},
+                                        {'bucket': 'slacking',
+                                         'tags': ['bad'],
+                                         'description': 'mooching around, wasting time'}]
+                            }
+                  )
+
 
 # Tokens:
 @app.route("/<string:user>/tokens/<date:date>", methods=['POST'])

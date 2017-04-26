@@ -60,6 +60,27 @@ class Templates(Store):
         self._connection.commit()
         cursor.close()
 
+    def allocate_to_human(self, human, template, start_date):
+        templates = self.fetch_by_human(human)
+        if len(templates) == 0:
+            cursor = self._connection.cursor()
+            sql = 'insert into human_templates(human_pkey, template_pkey, start_date, end_date) ' + \
+                  'values (?,?,?)'
+            cursor.execute(sql, (human.pkey, template.pkey, '0-01-01'))
+            self._connection.commit()
+        else:
+            template_to_modify = [x for x in templates
+                                  if x.start_date < start_date and x.end_date > start_date][0]
+            template_to_modify.end_date = start_date
+            self.update(template_to_modify)
+            cursor = self._connection.cursor()
+            sql = 'insert into human_templates(human_pkey, template_pkey, start_date, end_date) ' + \
+                  'values (?,?,?)'
+            cursor.execute(sql, (human.pkey, template.pkey,
+                                 datetime.datetime.strftime(start_date, '%Y-%m-%d'),
+                                 '9000-01-01'))
+            self._connection.commit()
+
     def fetch_by_human(self, human):
         cursor = self._connection.cursor()
         sql = 'select template_pkey, start_date, end_date from human_templates' + \
