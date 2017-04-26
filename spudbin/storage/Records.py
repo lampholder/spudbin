@@ -52,7 +52,7 @@ class Records(Store):
         self._connection.commit()
         cursor.close()
 
-    def create_or_replace(self, record):
+    def create(self, record):
         self.delete_by_human_date(record.human, record.date)
         cursor = self._connection.cursor()
         sql = 'insert into records(human_pkey, date, template_pkey, code, tokens) ' + \
@@ -60,4 +60,6 @@ class Records(Store):
         cursor.execute(sql, (record.human.pkey, record.date, record.template.pkey,
                              record.code, record.tokens, ))
         self._connection.commit()
+        insert_id = cursor.lastrowid
         cursor.close()
+        return insert_id

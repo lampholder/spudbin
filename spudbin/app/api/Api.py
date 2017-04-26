@@ -1,39 +1,56 @@
 from flask import jsonify
-from flask import current_app
-
-import requests
-import uuid
-
-from datetime import datetime
-from werkzeug.routing import BaseConverter, ValidationError
+from flask import request
 
 from spudbin.app import app
 
-class DateConverter(BaseConverter):
-    """Extracts a ISO8601 date from the path and validates it."""
+from spudbin.storage import Database
+from spudbin.storage import Humans, Human
+from spudbin.storage import Templates, Template
+from spudbin.storage import Records, Record
 
-    regex = r'\d{4}-\d{2}-\d{2}'
+CONNECTION = Database.connection()
 
-    def to_python(self, value):
-        try:
-            return datetime.strptime(value, '%Y-%m-%d').date()
-        except ValueError:
-            raise ValidationError()
-
-    def to_url(self, value):
-        return value.strftime('%Y-%m-%d')
-
-app.url_map.converters['date'] = DateConverter
+HUMANS = Humans(CONNECTION)
+TEMPLATES = Templates(CONNECTION)
+RECORDS = Records(CONNECTION)
 
 @app.route("/template/<string:user>/<date:date>", methods=['GET'])
 def get_template(user, date):
     return jsonify(user=user,
                    date=date,
                    template={'id': 1,
-                             'buckets':[{'bucket': 'working', 'tags': ['good'], 'description': 'working hard, yeah'},
-                                        {'bucket': 'slacking', 'tags': ['bad'], 'description': 'mooching around, wasting time'}]
+                             'maxTokens': 8,
+                             'buckets':[{'bucket': 'working',
+                                         'tags': ['good'],
+                                         'description': 'working hard, yeah'},
+                                        {'bucket': 'slacking',
+                                         'tags': ['bad'],
+                                         'description': 'mooching around, wasting time'}]
                             }
                   )
 
-if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=80)
+@app.route("/template", methods=['POST'])
+def create_template(template):
+    row_id = TEMPLATES.create(Template(pkey=None,
+                                       template=request.get_json(),
+                                       enabled=True))
+    return jsonify(TEMPLATES.fetch_by_pkey(row_id))
+
+@app.route("/tokens/<string:user>/<date:date>", methods=['GET'])
+def get_tokens(user, date):
+    return 'OKAY'
+
+@app.route("/tokens/<string:user>/<date:date>", methods=['POST'])
+def submit_tokens(user, date):
+    human = HUMANS.fetch_by_login(user)
+
+    RECORDS.delete_by_human_date(human, date)
+
+    template = TEMPLATES.fetch_by_pkey(1)
+    record = Record(human=human,
+                    date=date,
+                    template=template,
+                    code='ABC123',
+                    tokens=4)
+    RECORDS.create(record)
+    return 'OKAY'

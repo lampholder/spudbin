@@ -44,7 +44,9 @@ class Humans(Store):
         sql = 'insert into humans(pkey, login, access_token) values (?,?,?)'
         cursor.execute(sql, (human.pkey, human.login, human.access_token,))
         self._connection.commit()
+        insert_id = cursor.lastrowid
         cursor.close()
+        return insert_id
 
     def update(self, human):
         cursor = self._connection.cursor()

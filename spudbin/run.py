@@ -2,7 +2,7 @@ from flask import Flask
 
 from spudbin.app import app
 
-from spudbin.app.api import GithubLogin
+from spudbin.app.auth import GithubLogin
 from spudbin.app.api import Api
 
 if __name__ == "__main__":
