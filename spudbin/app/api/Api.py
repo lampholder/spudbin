@@ -67,29 +67,35 @@ def assign_template_for_user(user, template_id):
 @app.route("/<string:user>/templates/<date:date>", methods=['GET'])
 def get_template_by_human_date(user, date):
     human = HUMANS.fetch_by_login(user)
-    associations = ASSOCIATIONS.fetch_by_human(human)
-    return jsonify([x for x in associations
-                    if x.start_date <= date
-                    and x.end_date > date][0].template._asdict())
+    association = ASSOCIATIONS.fetch_by_human_date(human, date)
+    return jsonify(association.template._asdict())
 
 # Tokens:
 @app.route("/<string:user>/tokens/<date:date>", methods=['POST'])
 def submit_tokens(user, date):
+    """This method basically highlights everything that is shitty about my code"""
     human = HUMANS.fetch_by_login(user)
+    template = ASSOCIATIONS.fetch_by_human_date(human, date).template
 
+    # We should make this guy atomic:
     RECORDS.delete_by_human_date(human, date)
 
-    template = TEMPLATES.fetch_by_pkey(1)
-    record = Record(human=human,
-                    date=date,
-                    template=template,
-                    code='ABC123',
-                    tokens=4)
-    RECORDS.create(record)
-    return 'OKAY'
+    # We should validate somet of this stuffs! Like the total count and the buckets being in
+    # the template!
+
+    buckets = request.get_json()
+    for allocation in buckets:
+
+        record = Record(human=human,
+                        date=date,
+                        template=template,
+                        code=allocation['bucket'],
+                        tokens=allocation['tokens'])
+        RECORDS.create(record)
+
+    return jsonify(RECORDS.fetch_by_human_date(human, date))
 
 @app.route("/<string:user>/tokens/<date:date>", methods=['GET'])
 def get_tokens(user, date):
-    return 'OKAY'
-
-
+    human = HUMANS.fetch_by_login(user)
+    return jsonify(RECORDS.fetch_by_human_date(human, date))

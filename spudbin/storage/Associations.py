@@ -80,3 +80,10 @@ class Associations(Store):
         for row in rows:
             yield self.row_to_entity(row)
 
+    def fetch_by_human_date(self, human, date):
+        cursor = self._connection.cursor()
+        sql = 'select pkey, human_pkey, template_pkey, start_date, end_date ' + \
+              'from human_templates where human_pkey = ? and start_date <= ? ' + \
+              'and end_date > ?'
+        cursor.execute(sql, (human.pkey, date, date, ))
+        return self.one_or_none(cursor)
