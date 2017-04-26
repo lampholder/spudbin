@@ -41,7 +41,7 @@ def get_templates_for_user(user):
 
 @app.route('/<string:user>/templates/<int:template_id>', methods=['POST'])
 def assign_template_for_user(user, template_id):
-    start_date = request.get_json['startDate']
+    start_date = request.get_json()['startDate']
     human = HUMANS.fetch_by_login(user)
     template = TEMPLATES.fetch_by_pkey(template_id)
 
