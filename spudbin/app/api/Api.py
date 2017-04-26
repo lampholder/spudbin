@@ -36,12 +36,18 @@ def create_template():
 def get_template_by_id(template_id):
     return jsonify(TEMPLATES.fetch_by_pkey(template_id)._asdict())
 
+def filter_keys(dic, keys):
+    filtered = dict(dic)
+    for key in keys:
+        del filtered[key]
+    return filtered
 
 # User templates:
 @app.route('/<string:user>/templates', methods=['GET'])
 def get_templates_for_user(user):
     human = HUMANS.fetch_by_login(user)
-    return jsonify([x._asdict() for x in ASSOCIATIONS.fetch_by_human(human)])
+    return jsonify([filter_keys(x._asdict(), ['human'])
+                    for x in ASSOCIATIONS.fetch_by_human(human)])
 
 @app.route('/<string:user>/templates/<int:template_id>', methods=['POST'])
 def assign_template_for_user(user, template_id):
