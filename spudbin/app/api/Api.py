@@ -14,7 +14,8 @@ HUMANS = Humans(CONNECTION)
 TEMPLATES = Templates(CONNECTION)
 RECORDS = Records(CONNECTION)
 
-@app.route("/template/<string:user>/<date:date>", methods=['GET'])
+# Templates:
+@app.route("/<string:user>/templates/<date:date>", methods=['GET'])
 def get_template_by_human_date(user, date):
     return jsonify(user=user,
                    date=date,
@@ -29,8 +30,11 @@ def get_template_by_human_date(user, date):
                             }
                   )
 
-# Templates:
-@app.route("/template", methods=['POST'])
+@app.route('/templates', methods=['GET'])
+def get_templates():
+    return jsonify([x._asdict() for x in TEMPLATES.all()])
+
+@app.route("/templates", methods=['POST'])
 def create_template():
     if not Templates.validate_json_template(request.get_json()):
         return 'Invalid template object', 400
@@ -39,13 +43,12 @@ def create_template():
                                        enabled=True))
     return jsonify(TEMPLATES.fetch_by_pkey(row_id)._asdict())
 
-@app.route("/template/<int:template_id>", methods=['GET'])
+@app.route("/templates/<int:template_id>", methods=['GET'])
 def get_template_by_id(template_id):
     return jsonify(TEMPLATES.fetch_by_pkey(template_id)._asdict())
 
-
 # Tokens:
-@app.route("/tokens/<string:user>/<date:date>", methods=['POST'])
+@app.route("/<string:user>/tokens/<date:date>", methods=['POST'])
 def submit_tokens(user, date):
     human = HUMANS.fetch_by_login(user)
 
@@ -60,7 +63,7 @@ def submit_tokens(user, date):
     RECORDS.create(record)
     return 'OKAY'
 
-@app.route("/tokens/<string:user>/<date:date>", methods=['GET'])
+@app.route("/<string:user>/tokens/<date:date>", methods=['GET'])
 def get_tokens(user, date):
     return 'OKAY'
 
