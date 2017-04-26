@@ -31,7 +31,7 @@ class Records(Store):
 
     def row_to_entity(self, row):
         return Record(human=self._humans.fetch_by_pkey(row['human_pkey']),
-                      date=datetime.datetime.strptime(row['date'], '%Y-%m-%d'),
+                      date=datetime.datetime.strptime(row['date'], '%Y-%m-%d').date(),
                       template=self._templates.fetch_by_pkey(row['template_pkey']),
                       code=row['code'],
                       tokens=row['tokens'])

@@ -32,8 +32,8 @@ class Associations(Store):
         return Association(pkey=row['pkey'],
                            human=self._humans.fetch_by_pkey(row['human_pkey']),
                            template=self._templates.fetch_by_pkey(row['template_pkey']),
-                           start_date=datetime.datetime.strptime(row['start_date'], '%Y-%m-%d'),
-                           end_date=datetime.datetime.strptime(row['end_date'], '%Y-%m-%d'))
+                           start_date=datetime.datetime.strptime(row['start_date'], '%Y-%m-%d').date(),
+                           end_date=datetime.datetime.strptime(row['end_date'], '%Y-%m-%d').date())
 
     def update(self, association):
         print 'asked to update to ', association

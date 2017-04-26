@@ -1,5 +1,4 @@
 import json
-import datetime
 from collections import namedtuple
 from spudbin.storage import Store
 
