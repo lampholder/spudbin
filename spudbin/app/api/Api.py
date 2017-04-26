@@ -21,7 +21,8 @@ RECORDS = Records(CONNECTION)
 def filter_keys(dic, keys):
     filtered = dict(dic)
     for key in keys:
-        del filtered[key]
+        if key in filtered:
+            del filtered[key]
     return filtered
 
 # Templates:
@@ -67,10 +68,9 @@ def assign_template_for_user(user, template_id):
 def get_template_by_human_date(user, date):
     human = HUMANS.fetch_by_login(user)
     associations = ASSOCIATIONS.fetch_by_human(human)
-    return jsonify(filter_keys([x for x in associations
-                                if x.start_date <= date
-                                and x.end_date > date][0].template._asdict(),
-                               ['human']))
+    return jsonify([x for x in associations
+                    if x.start_date <= date
+                    and x.end_date > date][0].template._asdict())
 
 # Tokens:
 @app.route("/<string:user>/tokens/<date:date>", methods=['POST'])
