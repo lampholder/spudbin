@@ -7,11 +7,13 @@ from spudbin.storage import Database
 from spudbin.storage import Humans, Human
 from spudbin.storage import Templates, Template
 from spudbin.storage import Records, Record
+from spudbin.storage import Associations, Association
 
 CONNECTION = Database.connection()
 
 HUMANS = Humans(CONNECTION)
 TEMPLATES = Templates(CONNECTION)
+ASSOCIATIONS = Associations(CONNECTION)
 RECORDS = Records(CONNECTION)
 
 # Templates:
@@ -37,7 +39,7 @@ def get_template_by_id(template_id):
 @app.route('/<string:user>/templates', methods=['GET'])
 def get_templates_for_user(user):
     human = HUMANS.fetch_by_login(user)
-    return jsonify([x for x in TEMPLATES.fetch_by_human(human)]) # It's weird that this one is not a namedtuple
+    return jsonify([x._asdict() for x in ASSOCIATIONS.fetch_by_human(human)])
 
 @app.route('/<string:user>/templates/<int:template_id>', methods=['POST'])
 def assign_template_for_user(user, template_id):
@@ -45,7 +47,7 @@ def assign_template_for_user(user, template_id):
     human = HUMANS.fetch_by_login(user)
     template = TEMPLATES.fetch_by_pkey(template_id)
 
-    TEMPLATES.allocate_to_human(human, template, start_date)
+    ASSOCIATIONS.allocate_to_human(human, template, start_date)
     return 'OKAY'
 
 @app.route("/<string:user>/templates/<date:date>", methods=['GET'])
