@@ -1,7 +1,5 @@
-from flask import Flask
 from flask import jsonify
-from flask import redirect
-from flask import request
+from flask import current_app
 
 import requests
 import uuid
@@ -22,6 +20,8 @@ class DateConverter(BaseConverter):
 
     def to_url(self, value):
         return value.strftime('%Y-%m-%d')
+
+app = current_app()
 
 app.url_map.converters['date'] = DateConverter
 

@@ -2,12 +2,14 @@ import uuid
 
 import requests
 
-from flask import Flask
 from flask import redirect
 from flask import request
+from flask import current_app
 
 from spudbin.storage import Database
 from spudbin.storage import Humans, Human
+
+app = current_app()
 
 humans = Humans(Database.connection())
 state_tracker = []
