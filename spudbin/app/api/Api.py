@@ -30,7 +30,7 @@ def get_template(user, date):
                   )
 
 @app.route("/template", methods=['POST'])
-def create_template(template):
+def create_template():
     row_id = TEMPLATES.create(Template(pkey=None,
                                        template=request.get_json(),
                                        enabled=True))
