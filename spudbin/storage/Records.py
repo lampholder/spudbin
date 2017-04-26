@@ -19,7 +19,7 @@ class Records(Store):
             template_pkey integer not null,
             code text not null,
             tokens integer not null,
-            constraint date_code_unique unique(date, code)
+            constraint human_date_code_unique unique(human_pkey, date, code)
         );
         """ % (table_name, table_name)
 
