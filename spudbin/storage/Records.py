@@ -38,7 +38,7 @@ class Records(Store):
 
     def fetch_by_human_date(self, human, date):
         cursor = self._connection.cursor()
-        sql = 'select * from records where human = ? and date = ?'
+        sql = 'select * from records where human_pkey = ? and date = ?'
         cursor.execute(sql, (human.pkey, datetime.datetime.strftime(date, '%Y-%m-%d', )))
         rows = cursor.fetchall()
         cursor.close()
