@@ -61,7 +61,7 @@ class Templates(Store):
         cursor.close()
 
     def allocate_to_human(self, human, template, start_date):
-        templates = self.fetch_by_human(human)
+        templates = list(self.fetch_by_human(human))
         if len(templates) == 0:
             cursor = self._connection.cursor()
             sql = 'insert into human_templates(human_pkey, template_pkey, start_date, end_date) ' + \
