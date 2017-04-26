@@ -65,8 +65,8 @@ class Templates(Store):
         if len(templates) == 0:
             cursor = self._connection.cursor()
             sql = 'insert into human_templates(human_pkey, template_pkey, start_date, end_date) ' + \
-                  'values (?,?,?)'
-            cursor.execute(sql, (human.pkey, template.pkey, '0-01-01'))
+                  'values (?,?,?,?)'
+            cursor.execute(sql, (human.pkey, template.pkey, '0-01-01', '9000-01-01'))
             self._connection.commit()
         else:
             template_to_modify = [x for x in templates
@@ -75,7 +75,7 @@ class Templates(Store):
             self.update(template_to_modify)
             cursor = self._connection.cursor()
             sql = 'insert into human_templates(human_pkey, template_pkey, start_date, end_date) ' + \
-                  'values (?,?,?)'
+                  'values (?,?,?,?)'
             cursor.execute(sql, (human.pkey, template.pkey,
                                  datetime.datetime.strftime(start_date, '%Y-%m-%d'),
                                  '9000-01-01'))
