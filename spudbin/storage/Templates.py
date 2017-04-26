@@ -4,6 +4,7 @@ from collections import namedtuple
 from spudbin.storage import Store
 
 Template = namedtuple('Template', ['pkey', 'template', 'enabled'])
+Association = namedtuple('Association', ['human', 'template', 'start_date', 'end_date'])
 
 class Templates(Store):
 
@@ -90,6 +91,6 @@ class Templates(Store):
         cursor.close()
         for row in rows:
             yield {'start': datetime.datetime.strptime(row['start_date'], '%Y-%m-%d'),
-                   'end': datetime.datetime.strptime(row['start_date'], '%Y-%m-%d'),
+                   'end': datetime.datetime.strptime(row['end_date'], '%Y-%m-%d'),
                    'template': self.fetch_by_pkey(row['template_pkey'])}
 
