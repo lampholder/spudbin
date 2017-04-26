@@ -22,7 +22,7 @@ class Templates(Store):
             start_date text not null,
             end_date text not null
         );
-        """ % (table_name, table_name)
+        """
 
     def __init__(self, connection):
         self._connection = connection
