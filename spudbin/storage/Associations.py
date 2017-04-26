@@ -60,9 +60,7 @@ class Associations(Store):
             association_to_modify = [x for x in associations
                                      if x.start_date < association.start_date
                                      and x.end_date > association.start_date][0]
-            self.update(association_to_modify._replace(end_date=
-                                                       datetime.datetime.strftime(association.start_date,
-                                                                                  '%Y-%m-%d')))
+            self.update(association_to_modify._replace(end_date=association.start_date))
 
             cursor = self._connection.cursor()
             sql = 'insert into human_templates(human_pkey, template_pkey, start_date, ' + \
