@@ -37,7 +37,7 @@ def get_template_by_id(template_id):
 @app.route('/<string:user>/templates', methods=['GET'])
 def get_templates_for_user(user):
     human = HUMANS.fetch_by_login(user)
-    return jsonify([x._asdict() for x in TEMPLATES.fetch_by_human(human)])
+    return jsonify([x for x in TEMPLATES.fetch_by_human(human)]) # It's weird that this one is not a namedtuple
 
 @app.route('/<string:user>/templates/<int:template_id>', methods=['POST'])
 def assign_template_for_user(user, template_id):
