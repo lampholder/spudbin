@@ -92,7 +92,7 @@ def submit_tokens(user, date):
                         template=template,
                         code=allocation['bucket'],
                         tokens=allocation['tokens'])
-        RECORDS.create(record)
+        print 'persisting', RECORDS.create(record)
 
     return jsonify([x._asdict() for x in RECORDS.fetch_by_human_date(human, date)])
 

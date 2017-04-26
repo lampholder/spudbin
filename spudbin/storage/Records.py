@@ -57,7 +57,7 @@ class Records(Store):
         cursor = self._connection.cursor()
         sql = 'insert into records(human_pkey, date, template_pkey, code, tokens) ' + \
               'values (?,?,?,?,?)'
-        cursor.execute(sql, (record.human.pkey, 
+        cursor.execute(sql, (record.human.pkey,
                              datetime.datetime.strftime(record.date, '%Y-%m-%d'),
                              record.template.pkey,
                              record.code, record.tokens, ))
