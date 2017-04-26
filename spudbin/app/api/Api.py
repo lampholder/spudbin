@@ -85,6 +85,7 @@ def submit_tokens(user, date):
 
     buckets = request.get_json()['buckets']
     for allocation in buckets:
+        print 'persisting allocaiton', allocation
         record = Record(human=human,
                         date=date,
                         template=template,
