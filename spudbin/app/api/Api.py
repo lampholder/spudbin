@@ -94,7 +94,7 @@ def submit_tokens(user, date):
         RECORDS.create(record)
 
     return jsonify({'date': date,
-                    'template': template,
+                    'template': template._asdict(),
                     'buckets': [filter_keys(x._asdict(), ['human', 'template', 'date'])
                                 for x in RECORDS.fetch_by_human_date(human, date)]})
 
