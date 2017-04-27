@@ -101,4 +101,9 @@ def submit_tokens(user, date):
 @app.route("/<string:user>/tokens/<date:date>", methods=['GET'])
 def get_tokens(user, date):
     human = HUMANS.fetch_by_login(user)
-    return jsonify(RECORDS.fetch_by_human_date(human, date))
+    template = ASSOCIATIONS.fetch_by_human_date(human, date).template
+
+    return jsonify({'date': date,
+                    'template': template._asdict(),
+                    'buckets': [filter_keys(x._asdict(), ['human', 'template', 'date'])
+                                for x in RECORDS.fetch_by_human_date(human, date)]})
