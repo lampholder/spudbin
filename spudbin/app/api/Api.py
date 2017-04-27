@@ -93,7 +93,10 @@ def submit_tokens(user, date):
 
         RECORDS.create(record)
 
-    return jsonify([x._asdict() for x in RECORDS.fetch_by_human_date(human, date)])
+    return jsonify({'date': date,
+                    'template': template,
+                    'buckets': [filter_keys(x._asdict(), ['human', 'template', 'date'])
+                                for x in RECORDS.fetch_by_human_date(human, date)]})
 
 @app.route("/<string:user>/tokens/<date:date>", methods=['GET'])
 def get_tokens(user, date):
