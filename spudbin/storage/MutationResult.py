@@ -3,7 +3,7 @@ class MutationResult(object):
     """Class for returning the results of any create or update operation."""
 
     def __init__(self, cursor):
-        self.lastrowid = cursor.lastrowid()
+        self.lastrowid = cursor.lastrowid
         self._cursor = cursor
         self._connection = cursor.connection()
 
