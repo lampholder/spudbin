@@ -55,7 +55,9 @@ def get_templates_for_user(username):
 def assign_template_for_user(username, template_id):
     start_date = datetime.datetime.strptime(request.get_json()['startDate'], '%Y-%m-%d').date()
     user = USERS.fetch_by_username(username)
+    print 'Found user', user
     template = TEMPLATES.fetch_by_pkey(template_id)
+    print 'Found template', template
 
     ASSOCIATIONS.create(Association(pkey=None,
                                     user=user,
