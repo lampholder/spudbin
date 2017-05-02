@@ -24,8 +24,7 @@ class Users(Store):
 
     def row_to_entity(self, row):
         return User(pkey=row['pkey'],
-                    username=row['username'],
-                    access_token=row['access_token'])
+                    username=row['username'])
 
     def fetch_by_username(self, username):
         """Fetch the user from the db by the username"""
