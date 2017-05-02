@@ -55,9 +55,7 @@ def get_templates_for_user(username):
 def assign_template_for_user(username, template_id):
     start_date = datetime.datetime.strptime(request.get_json()['startDate'], '%Y-%m-%d').date()
     user = USERS.fetch_by_username(username)
-    print 'Found user', user
     template = TEMPLATES.fetch_by_pkey(template_id)
-    print 'Found template', template
 
     ASSOCIATIONS.create(Association(pkey=None,
                                     user=user,
@@ -86,7 +84,15 @@ def submit_tokens(username, date):
     # the template!
 
     buckets = request.get_json()['buckets']
+
+    total_tokens = sum([x['tokens'] for x in buckets])
+    if total_tokens > template.template['maxTokens']:
+        return 'Too many tokens submitted; maximum is %s' % template.template['maxTokens'], 403
+
+    template_buckets = [x['bucket'] for x in template.template['buckets']]
     for allocation in buckets:
+        if allocation['bucket'] not in template_buckets:
+            return '%s is not a valid bucket' % allocation['bucket'], 403
         record = Record(user=user,
                         date=date,
                         template=template,
