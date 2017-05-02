@@ -2,20 +2,21 @@ import json
 import datetime
 from collections import namedtuple
 from spudbin.storage import Store
-from spudbin.storage import Humans
+from spudbin.storage import Users
 from spudbin.storage import Templates
+from spudbin.storage import MutationResult
 
-Association = namedtuple('Association', ['pkey', 'human', 'template', 'start_date', 'end_date'])
+Association = namedtuple('Association', ['pkey', 'user', 'template', 'start_date', 'end_date'])
 
 class Associations(Store):
 
-    table_name = 'human_templates'
+    table_name = 'user_templates'
     schema = \
         """
         drop table if exists %s;
         create table %s (
             pkey integer primary key,
-            human_pkey integer not null,
+            user_pkey integer not null,
             template_pkey integer not null,
             start_date text not null,
             end_date text not null
@@ -25,65 +26,99 @@ class Associations(Store):
     def __init__(self, connection):
         self._connection = connection
         self._load_schema_if_necessary()
-        self._humans = Humans(connection)
+        self._users = Users(connection)
         self._templates = Templates(connection)
 
     def row_to_entity(self, row):
         return Association(pkey=row['pkey'],
-                           human=self._humans.fetch_by_pkey(row['human_pkey']),
+                           user=self._users.fetch_by_pkey(row['user_pkey']),
                            template=self._templates.fetch_by_pkey(row['template_pkey']),
-                           start_date=datetime.datetime.strptime(row['start_date'], '%Y-%m-%d').date(),
+                           start_date=datetime.datetime.strptime(row['start_date'],
+                                                                 '%Y-%m-%d').date(),
                            end_date=datetime.datetime.strptime(row['end_date'], '%Y-%m-%d').date())
 
     def update(self, association):
+        """Update a user/template association by its pkey."""
         print 'asked to update to ', association
         cursor = self._connection.cursor()
-        sql = 'update human_templates set start_date = ?, end_date = ? where pkey = ?'
+        sql = 'update user_templates set start_date = ?, end_date = ? where pkey = ?'
         cursor.execute(sql, (datetime.datetime.strftime(association.start_date, '%Y-%m-%d'),
                              datetime.datetime.strftime(association.end_date, '%Y-%m-%d'),
                              association.pkey, ))
-        self._connection.commit()
-        cursor.close()
+        return MutationResult(cursor)
 
     def create(self, association):
-        associations = list(self.fetch_by_human(association.human))
+        """Create an association between a user and a template. For any user with associations,
+        for any given day they must have an association.
+        What this means is, for the first association, the window details are ignored - that
+        association is set for and from all time. Any subequent windows will interrupt
+        existing windows."""
+        associations = list(self.fetch_by_user(association.user))
         if len(associations) == 0:
+            # If there are no existing associations, this association is put in place
+            # for all time :)
             cursor = self._connection.cursor()
-            sql = 'insert into human_templates(human_pkey, template_pkey, start_date, ' + \
+            sql = 'insert into user_templates(user_pkey, template_pkey, start_date, ' + \
                   'end_date) values (?,?,?,?)'
-            cursor.execute(sql, (association.human.pkey,
+            cursor.execute(sql, (association.user.pkey,
                                  association.template.pkey,
                                  '1900-01-01',
                                  '9000-01-01'))
-            self._connection.commit()
+            return MutationResult(cursor)
         else:
-            association_to_modify = [x for x in associations
-                                     if x.start_date < association.start_date
-                                     and x.end_date > association.start_date][0]
-            self.update(association_to_modify._replace(end_date=association.start_date))
+            """Cases we need to handle:
 
+              All time: |AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA|
+            New assoc.: |AAAAAAAAAAAAAAAAAAAAAAAAAAAA|BBBBBB|AAAAAAAAAAAAAAAAAAAAA|
+            New assoc.: |AAAAAAAAAAA|CCCCCC|AAAAAAAAA|BBBBBB|AAAAAAAAAAAAAAAAAAAAA|
+            New assoc.: |AAAAAAAAAAA|CCC|DDDDDDD|AAAA|BBBBBB|AAAAAAAAAAAAAAAAAAAAA|
+            New assoc.: |AAAAAAAAAAA|CCC|DDD|EEEEEEEEEEEE|BB|AAAAAAAAAAAAAAAAAAAAA|
+
+            So, enumerating instructions:
+             - any existing associations entirely within the new window should be removed
+             - any existing associations who end after the start of the new window
+               should be truncated
+             - any existing associations who start before the end of the new window
+               should be delayed
+            """
             cursor = self._connection.cursor()
-            sql = 'insert into human_templates(human_pkey, template_pkey, start_date, ' + \
-                  'end_date) values (?,?,?,?)'
-            cursor.execute(sql, (association.human.pkey, association.template.pkey,
-                                 datetime.datetime.strftime(association.start_date, '%Y-%m-%d'),
-                                 '9000-01-01')) # TODO: this should be the start date of the next thing.
-            self._connection.commit()
+            sql = 'delete from user_templates where user = ? and start_date >= ? and end_date <= ?'
+            cursor.execute(sql, (association.user.pkey,
+                                 association.start_date,
+                                 association.end_date, ))
 
-    def fetch_by_human(self, human):
+            truncate_sql = 'update user_templates set end_date = ? where user = ? and ' + \
+                           'start_date < ? and end_date > ?'
+            cursor.execute(truncate_sql, (association.start_date - 1,
+                                          association.user.pkey,
+                                          association.start_date,
+                                          association.start_date, ))
+
+            delay_sql = 'update user_templates set start_date = ? where user = ? and ' + \
+                        'start_date < ? and end_date > ?'
+            cursor.execute(delay_sql, (association.end_date + 1,
+                                       association.user.pkey,
+                                       association.end_date,
+                                       association.end_date, ))
+
+            return MutationResult(cursor)
+
+    def fetch_by_user(self, user):
+        """Fetch the template associations for a given user."""
         cursor = self._connection.cursor()
-        sql = 'select pkey, human_pkey, template_pkey, start_date, end_date ' + \
-              'from human_templates where human_pkey = ?'
-        cursor.execute(sql, (human.pkey, ))
+        sql = 'select pkey, user_pkey, template_pkey, start_date, end_date ' + \
+              'from user_templates where user_pkey = ?'
+        cursor.execute(sql, (user.pkey, ))
         rows = cursor.fetchall()
         cursor.close()
         for row in rows:
             yield self.row_to_entity(row)
 
-    def fetch_by_human_date(self, human, date):
+    def fetch_by_user_date(self, user, date):
+        """Fetch the template association for a given user on a given date."""
         cursor = self._connection.cursor()
-        sql = 'select pkey, human_pkey, template_pkey, start_date, end_date ' + \
-              'from human_templates where human_pkey = ? and start_date <= ? ' + \
+        sql = 'select pkey, user_pkey, template_pkey, start_date, end_date ' + \
+              'from user_templates where user_pkey = ? and start_date <= ? ' + \
               'and end_date > ?'
-        cursor.execute(sql, (human.pkey, date, date, ))
+        cursor.execute(sql, (user.pkey, date, date, ))
         return self.one_or_none(cursor)

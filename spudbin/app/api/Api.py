@@ -6,14 +6,14 @@ from flask import request
 from spudbin.app import app
 
 from spudbin.storage import Database
-from spudbin.storage import Humans, Human
+from spudbin.storage import Users, User
 from spudbin.storage import Templates, Template
 from spudbin.storage import Records, Record
 from spudbin.storage import Associations, Association
 
 CONNECTION = Database.connection()
 
-HUMANS = Humans(CONNECTION)
+USERS = Users(CONNECTION)
 TEMPLATES = Templates(CONNECTION)
 ASSOCIATIONS = Associations(CONNECTION)
 RECORDS = Records(CONNECTION)
@@ -45,47 +45,47 @@ def get_template_by_id(template_id):
 
 
 # User templates:
-@app.route('/<string:user>/templates', methods=['GET'])
-def get_templates_for_user(user):
-    human = HUMANS.fetch_by_login(user)
-    return jsonify([filter_keys(x._asdict(), ['human'])
-                    for x in ASSOCIATIONS.fetch_by_human(human)])
+@app.route('/<string:username>/templates', methods=['GET'])
+def get_templates_for_user(username):
+    user = USERS.fetch_by_username(username)
+    return jsonify([filter_keys(x._asdict(), ['user'])
+                    for x in ASSOCIATIONS.fetch_by_user(user)])
 
-@app.route('/<string:user>/templates/<int:template_id>', methods=['POST'])
-def assign_template_for_user(user, template_id):
+@app.route('/<string:username>/templates/<int:template_id>', methods=['POST'])
+def assign_template_for_user(username, template_id):
     start_date = datetime.datetime.strptime(request.get_json()['startDate'], '%Y-%m-%d').date()
-    human = HUMANS.fetch_by_login(user)
+    user = USERS.fetch_by_username(username)
     template = TEMPLATES.fetch_by_pkey(template_id)
 
     ASSOCIATIONS.create(Association(pkey=None,
-                                    human=human,
+                                    user=user,
                                     template=template,
                                     start_date=start_date,
                                     end_date=None))
     return 'OKAY'
 
-@app.route("/<string:user>/templates/<date:date>", methods=['GET'])
-def get_template_by_human_date(user, date):
-    human = HUMANS.fetch_by_login(user)
-    association = ASSOCIATIONS.fetch_by_human_date(human, date)
+@app.route("/<string:username>/templates/<date:date>", methods=['GET'])
+def get_template_by_user_date(username, date):
+    user = USERS.fetch_by_username(username)
+    association = ASSOCIATIONS.fetch_by_user_date(user, date)
     return jsonify(association.template._asdict())
 
 # Tokens:
-@app.route("/<string:user>/tokens/<date:date>", methods=['POST'])
-def submit_tokens(user, date):
+@app.route("/<string:username>/tokens/<date:date>", methods=['POST'])
+def submit_tokens(username, date):
     """This method basically highlights everything that is shitty about my code"""
-    human = HUMANS.fetch_by_login(user)
-    template = ASSOCIATIONS.fetch_by_human_date(human, date).template
+    user = USERS.fetch_by_username(username)
+    template = ASSOCIATIONS.fetch_by_user_date(user, date).template
 
     # We should make this guy atomic:
-    RECORDS.delete_by_human_date(human, date)
+    RECORDS.delete_by_user_date(user, date)
 
     # We should validate somet of this stuffs! Like the total count and the buckets being in
     # the template!
 
     buckets = request.get_json()['buckets']
     for allocation in buckets:
-        record = Record(human=human,
+        record = Record(user=user,
                         date=date,
                         template=template,
                         code=allocation['bucket'],
@@ -95,15 +95,15 @@ def submit_tokens(user, date):
 
     return jsonify({'date': date,
                     'template': template._asdict(),
-                    'buckets': [filter_keys(x._asdict(), ['human', 'template', 'date'])
-                                for x in RECORDS.fetch_by_human_date(human, date)]})
+                    'buckets': [filter_keys(x._asdict(), ['user', 'template', 'date'])
+                                for x in RECORDS.fetch_by_user_date(user, date)]})
 
-@app.route("/<string:user>/tokens/<date:date>", methods=['GET'])
-def get_tokens(user, date):
-    human = HUMANS.fetch_by_login(user)
-    template = ASSOCIATIONS.fetch_by_human_date(human, date).template
+@app.route("/<string:username>/tokens/<date:date>", methods=['GET'])
+def get_tokens(username, date):
+    user = USERS.fetch_by_username(username)
+    template = ASSOCIATIONS.fetch_by_user_date(user, date).template
 
     return jsonify({'date': date,
                     'template': template._asdict(),
-                    'buckets': [filter_keys(x._asdict(), ['human', 'template', 'date'])
-                                for x in RECORDS.fetch_by_human_date(human, date)]})
+                    'buckets': [filter_keys(x._asdict(), ['user', 'template', 'date'])
+                                for x in RECORDS.fetch_by_user_date(user, date)]})

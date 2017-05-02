@@ -1,4 +1,7 @@
+"""Abstract storage impl."""
+
 class Store(object):
+    """Abstract db storage class, implementing some common stuff."""
 
     _connection = None
     table_name = None
@@ -20,9 +23,11 @@ class Store(object):
             cursor.close()
 
     def row_to_entity(self, row):
+        """Should take a row from the db and hydrate to a useful entity object."""
         pass
 
     def all(self):
+        """Fetch all of the entities in this table; return as a generator."""
         cursor = self._connection.cursor()
         sql = 'select * from %s' % self.table_name
         cursor.execute(sql)
@@ -32,12 +37,14 @@ class Store(object):
             yield self.row_to_entity(row)
 
     def fetch_by_pkey(self, pkey):
+        """Fetch the entity by its pkey"""
         cursor = self._connection.cursor()
         sql = 'select * from %s where pkey = ?' % self.table_name
         cursor.execute(sql, (pkey, ))
         return self.one_or_none(cursor)
 
     def delete_by_pkey(self, pkey):
+        """Delete the entity referenced by its pkey"""
         cursor = self._connection.cursor()
         sql = 'delete from %s where pkey = ?' % self.table_name
         cursor.execute(sql, (pkey,))
@@ -45,6 +52,8 @@ class Store(object):
         cursor.close()
 
     def one_or_none(self, cursor):
+        """Safely fetches at most one record from the db. If more match the query it
+        suggests we have a nasty problem :)"""
         if cursor.rowcount == 0:
             cursor.close()
             return None

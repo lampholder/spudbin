@@ -7,11 +7,11 @@ from flask import request
 from flask import current_app
 
 from spudbin.storage import Database
-from spudbin.storage import Humans, Human
+from spudbin.storage import Users, User
 
 from spudbin.app import app
 
-humans = Humans(Database.connection())
+users = Users(Database.connection())
 state_tracker = []
 
 @app.route('/callback/', methods=['GET'])
@@ -31,8 +31,8 @@ def login_complete():
 
     state_tracker.remove(request.args['state'])
 
-    humans.delete_by_login(user['login'])
-    humans.create(Human(pkey=None, login=user['login'], access_token=response['access_token']))
+    users.delete_by_username(user['login'])
+    users.create(User(pkey=None, username=user['login']))
     return user['login']
 
 @app.route('/login')
