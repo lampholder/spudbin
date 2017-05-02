@@ -5,7 +5,7 @@ class MutationResult(object):
     def __init__(self, cursor):
         self.lastrowid = cursor.lastrowid
         self._cursor = cursor
-        self._connection = cursor.connection()
+        self._connection = cursor.connection
 
     def commit(self):
         """Commit the changes."""
