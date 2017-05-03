@@ -119,6 +119,9 @@ def get_tokens(username, date):
     with Database.connection() as connection:
         user = USERS.fetch_by_username(username, connection)
         tokens = RECORDS.fetch_by_user_date(user, date, connection)
+        print 'Found tokens:', tokens
+        print 'Filtered tokens:', [filter_keys(x._asdict(), ['user', 'template', 'date'])
+                                   for x in tokens]
 
         template_pkeys = list(set([x.template.pkey for x in tokens]))
         if len(template_pkeys) == 0:
