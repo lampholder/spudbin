@@ -121,7 +121,9 @@ def get_tokens(username, date):
         tokens = RECORDS.fetch_by_user_date(user, date, connection)
 
         template_pkeys = list(set([x.template.pkey for x in tokens]))
-        if len(template_pkeys) != 1:
+        if len(template_pkeys) == 0:
+            return '{}', 200
+        elif len(template_pkeys) != 1:
             return 'ZOMG tokens filed for multiple templates on the same day D:', 500
 
         template = TEMPLATES.fetch_by_pkey(template_pkeys[0], connection)
