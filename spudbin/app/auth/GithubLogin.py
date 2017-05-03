@@ -11,7 +11,7 @@ from spudbin.storage import Users, User
 
 from spudbin.app import app
 
-users = Users(Database.connection())
+users = Users()
 state_tracker = []
 
 @app.route('/callback/', methods=['GET'])
@@ -31,9 +31,11 @@ def login_complete():
 
     state_tracker.remove(request.args['state'])
 
-    users.delete_by_username(user['login'])
-    users.create(User(pkey=None, username=user['login']))
-    return user['login']
+    with Database.connection() as connection:
+	users.delete_by_username(user['login'], connection)
+	users.create(User(pkey=None, username=user['login']), connection)
+        connection.commit()
+	return user['login']
 
 @app.route('/login')
 def redirect_to_github():
