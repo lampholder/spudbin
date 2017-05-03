@@ -20,7 +20,7 @@ class Templates(Store):
     def __init__(self):
         self._load_schema_if_necessary()
 
-    def row_to_entity(self, row):
+    def row_to_entity(self, row, connection):
         return Template(pkey=row['pkey'],
                         template=json.loads(row['template']),
                         enabled=row['enabled'] == 1)

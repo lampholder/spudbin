@@ -20,7 +20,7 @@ class Store(object):
             with Database.connection() as connection:
                 connection.executescript(self.schema)
 
-    def row_to_entity(self, row):
+    def row_to_entity(self, row, connection):
         """Should take a row from the db and hydrate to a useful entity object."""
         pass
 
@@ -30,7 +30,7 @@ class Store(object):
         cursor = connection.execute(sql)
         rows = cursor.fetchall()
         for row in rows:
-            yield self.row_to_entity(row)
+            yield self.row_to_entity(row, connection)
 
     def fetch_by_pkey(self, pkey, connection):
         """Fetch the entity by its pkey"""
@@ -55,4 +55,4 @@ class Store(object):
         else:
             row = cursor.fetchone()
             cursor.close()
-            return self.row_to_entity(row)
+            return self.row_to_entity(row, cursor.connection)

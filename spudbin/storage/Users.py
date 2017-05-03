@@ -21,7 +21,7 @@ class Users(Store):
     def __init__(self):
         self._load_schema_if_necessary()
 
-    def row_to_entity(self, row):
+    def row_to_entity(self, row, connection):
         return User(pkey=row['pkey'],
                     username=row['username'])
 

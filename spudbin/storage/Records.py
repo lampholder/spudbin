@@ -30,10 +30,10 @@ class Records(Store):
         self._users = Users()
         self._templates = Templates()
 
-    def row_to_entity(self, row):
-        return Record(user=self._users.fetch_by_pkey(row['user_pkey']),
+    def row_to_entity(self, row, connection):
+        return Record(user=self._users.fetch_by_pkey(row['user_pkey'], connection),
                       date=datetime.datetime.strptime(row['date'], '%Y-%m-%d').date(),
-                      template=self._templates.fetch_by_pkey(row['template_pkey']),
+                      template=self._templates.fetch_by_pkey(row['template_pkey'], connection),
                       code=row['code'],
                       tokens=row['tokens'])
 
@@ -44,7 +44,7 @@ class Records(Store):
         rows = cursor.fetchall()
         cursor.close()
         for row in rows:
-            yield self.row_to_entity(row)
+            yield self.row_to_entity(row, connection)
 
     def delete_by_user_date(self, user, date, connection):
         """Delete token records for a given user on a given date."""

@@ -27,10 +27,10 @@ class Associations(Store):
         self._users = Users()
         self._templates = Templates()
 
-    def row_to_entity(self, row):
+    def row_to_entity(self, row, connection):
         return Association(pkey=row['pkey'],
-                           user=self._users.fetch_by_pkey(row['user_pkey']),
-                           template=self._templates.fetch_by_pkey(row['template_pkey']),
+                           user=self._users.fetch_by_pkey(row['user_pkey'], connection),
+                           template=self._templates.fetch_by_pkey(row['template_pkey'], connection),
                            start_date=datetime.datetime.strptime(row['start_date'],
                                                                  '%Y-%m-%d').date(),
                            end_date=datetime.datetime.strptime(row['end_date'], '%Y-%m-%d').date())
@@ -102,7 +102,7 @@ class Associations(Store):
         rows = cursor.fetchall()
         cursor.close()
         for row in rows:
-            yield self.row_to_entity(row)
+            yield self.row_to_entity(row, connection)
 
     def fetch_by_user_date(self, user, date, connection):
         """Fetch the template association for a given user on a given date."""
