@@ -128,12 +128,6 @@ def get_tokens(username, date):
 
         template = TEMPLATES.fetch_by_pkey(template_pkeys[0], connection)
 
-        print "vvvvvvvvvvvvvv"
-        print "Where have tokens gone?"
-        print "Tokens", tokens
-        print [filter_keys(x._asdict(), ['user', 'template', 'date']) for x in tokens]
-        print "^^^^^^^^^^^^^^"
-
         return jsonify({'date': date,
                         'template': template._asdict(),
                         'tokens': [filter_keys(x._asdict(), ['user', 'template', 'date'])

@@ -43,8 +43,7 @@ class Records(Store):
         cursor = connection.execute(sql, (user.pkey, datetime.datetime.strftime(date, '%Y-%m-%d', )))
         rows = cursor.fetchall()
         cursor.close()
-        for row in rows:
-            yield self.row_to_entity(row, connection)
+        return [self.row_to_entity(row, connection) for row in rows]
 
     def delete_by_user_date(self, user, date, connection):
         """Delete token records for a given user on a given date."""

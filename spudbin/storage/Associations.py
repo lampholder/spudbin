@@ -101,8 +101,7 @@ class Associations(Store):
         cursor = connection.execute(sql, (user.pkey, ))
         rows = cursor.fetchall()
         cursor.close()
-        for row in rows:
-            yield self.row_to_entity(row, connection)
+        return [self.row_to_entity(row, connection) for row in rows]
 
     def fetch_by_user_date(self, user, date, connection):
         """Fetch the template association for a given user on a given date."""

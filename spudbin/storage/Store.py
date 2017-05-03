@@ -29,8 +29,7 @@ class Store(object):
         sql = 'select * from %s' % self.table_name
         cursor = connection.execute(sql)
         rows = cursor.fetchall()
-        for row in rows:
-            yield self.row_to_entity(row, connection)
+        return [self.row_to_entity(row, connection) for row in rows]
 
     def fetch_by_pkey(self, pkey, connection):
         """Fetch the entity by its pkey"""
