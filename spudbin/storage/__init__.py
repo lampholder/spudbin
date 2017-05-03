@@ -1,5 +1,4 @@
 """Storage classes."""
-from spudbin.storage.MutationResult import MutationResult
 from spudbin.storage.Store import Store
 from spudbin.storage.Users import Users, User
 from spudbin.storage.Templates import Templates, Template

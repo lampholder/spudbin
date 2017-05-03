@@ -17,8 +17,7 @@ class Templates(Store):
         );
         """ % (table_name, table_name)
 
-    def __init__(self, connection):
-        self._connection = connection
+    def __init__(self):
         self._load_schema_if_necessary()
 
     def row_to_entity(self, row):
@@ -36,18 +35,13 @@ class Templates(Store):
            and len(template['buckets']) > 0 \
            and len(filter(lambda x: 'bucket' not in x, template['buckets'])) == 0
 
-    def create(self, template):
-        cursor = self._connection.cursor()
+    def create(self, template, connection):
         sql = 'insert into templates(pkey, template, enabled) values (?,?,?)'
-        cursor.execute(sql, (template.pkey, json.dumps(template.template), 1 if template.enabled else 0,))
-        self._connection.commit()
+        cursor = connection.execute(sql, (template.pkey, json.dumps(template.template), 1 if template.enabled else 0,))
         insert_id = cursor.lastrowid
         cursor.close()
         return insert_id
 
-    def update(self, template):
-        cursor = self._connection.cursor()
+    def update(self, template, connection):
         sql = 'update template set template = ?, enabled = ? where pkey = ?'
-        cursor.execute(sql, (template.pkey, template.template, 1 if template.enabled else 0,))
-        self._connection.commit()
-        cursor.close()
+        connection.execute(sql, (template.pkey, template.template, 1 if template.enabled else 0,))

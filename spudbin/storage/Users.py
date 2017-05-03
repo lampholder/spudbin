@@ -18,43 +18,33 @@ class Users(Store):
         );
         """
 
-    def __init__(self, connection):
-        self._connection = connection
+    def __init__(self):
         self._load_schema_if_necessary()
 
     def row_to_entity(self, row):
         return User(pkey=row['pkey'],
                     username=row['username'])
 
-    def fetch_by_username(self, username):
+    def fetch_by_username(self, username, connection):
         """Fetch the user from the db by the username"""
-        cursor = self._connection.cursor()
         sql = 'select * from users where username = ?'
-        cursor.execute(sql, (username, ))
+        cursor = connection.execute(sql, (username, ))
         return self.one_or_none(cursor)
 
-    def delete_by_username(self, username):
+    def delete_by_username(self, username, connection):
         """Delete the user from storage referenced by the username"""
-        cursor = self._connection.cursor()
         sql = 'delete from users where username = ?'
-        cursor.execute(sql, (username,))
-        self._connection.commit()
-        cursor.close()
+        connection.execute(sql, (username,))
 
-    def create(self, user):
+    def create(self, user, connection):
         """Create and persist a new user"""
-        cursor = self._connection.cursor()
         sql = 'insert into users (pkey, username) values (?,?)'
-        cursor.execute(sql, (user.pkey, user.username, ))
-        self._connection.commit()
+        cursor = connection.execute(sql, (user.pkey, user.username, ))
         insert_id = cursor.lastrowid
         cursor.close()
         return insert_id
 
-    def update(self, user):
+    def update(self, user, connection):
         """Update an existing user"""
-        cursor = self._connection.cursor()
         sql = 'update users set username = ? where pkey = ?'
-        cursor.execute(sql, (user.pkey, user.username, ))
-        self._connection.commit()
-        cursor.close()
+        connection.execute(sql, (user.pkey, user.username, ))

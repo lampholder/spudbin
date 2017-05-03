@@ -25,11 +25,10 @@ class Records(Store):
         );
         """ % (table_name, table_name)
 
-    def __init__(self, connection):
-        self._connection = connection
+    def __init__(self):
         self._load_schema_if_necessary()
-        self._users = Users(connection)
-        self._templates = Templates(connection)
+        self._users = Users()
+        self._templates = Templates()
 
     def row_to_entity(self, row):
         return Record(user=self._users.fetch_by_pkey(row['user_pkey']),
@@ -38,35 +37,28 @@ class Records(Store):
                       code=row['code'],
                       tokens=row['tokens'])
 
-    def fetch_by_user_date(self, user, date):
+    def fetch_by_user_date(self, user, date, connection):
         """Fetch records for a given user on a given date."""
-        cursor = self._connection.cursor()
         sql = 'select * from records where user_pkey = ? and date = ?'
-        cursor.execute(sql, (user.pkey, datetime.datetime.strftime(date, '%Y-%m-%d', )))
+        cursor = connection.execute(sql, (user.pkey, datetime.datetime.strftime(date, '%Y-%m-%d', )))
         rows = cursor.fetchall()
         cursor.close()
         for row in rows:
             yield self.row_to_entity(row)
 
-    def delete_by_user_date(self, user, date):
+    def delete_by_user_date(self, user, date, connection):
         """Delete token records for a given user on a given date."""
-        cursor = self._connection.cursor()
         sql = 'delete from %s where user_pkey = ? and date = ?' % self.table_name
-        cursor.execute(sql, (user.pkey, datetime.datetime.strftime(date, '%Y-%m-%d'),))
-        self._connection.commit()
-        cursor.close()
+        connection.execute(sql, (user.pkey, datetime.datetime.strftime(date, '%Y-%m-%d'),))
 
-    def create(self, record):
-        """Drop some tokens in a bucket!"""
-        #TODO: Replace this with a thing that only allows valid tokenising to be done
-        cursor = self._connection.cursor()
+    def create(self, record, connection):
+        """Drop some potatoes in a bin!"""
         sql = 'insert into records(user_pkey, date, template_pkey, code, tokens) ' + \
               'values (?,?,?,?,?)'
-        cursor.execute(sql, (record.user.pkey,
-                             datetime.datetime.strftime(record.date, '%Y-%m-%d'),
-                             record.template.pkey,
-                             record.code, record.tokens, ))
-        self._connection.commit()
+        cursor = connection.execute(sql, (record.user.pkey,
+                                          datetime.datetime.strftime(record.date, '%Y-%m-%d'),
+                                          record.template.pkey,
+                                          record.code, record.tokens, ))
         insert_id = cursor.lastrowid
         cursor.close()
         return insert_id
