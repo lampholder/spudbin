@@ -119,18 +119,16 @@ def get_tokens(username, date):
     with Database.connection() as connection:
         user = USERS.fetch_by_username(username, connection)
         tokens = RECORDS.fetch_by_user_date(user, date, connection)
-        print 'Found tokens:', tokens
-        print 'Filtered tokens:', [filter_keys(x._asdict(), ['user', 'template', 'date'])
-                                   for x in tokens]
 
         template_pkeys = list(set([x.template.pkey for x in tokens]))
         if len(template_pkeys) == 0:
             return '{}', 200
-        elif len(template_pkeys) != 1:
+        elif len(template_pkeys) > 1:
             return 'ZOMG tokens filed for multiple templates on the same day D:', 500
 
         template = TEMPLATES.fetch_by_pkey(template_pkeys[0], connection)
+
         return jsonify({'date': date,
                         'template': template._asdict(),
-                        'buckets': [filter_keys(x._asdict(), ['user', 'template', 'date'])
-                                    for x in tokens]})
+                        'tokens': [filter_keys(x._asdict(), ['user', 'template', 'date'])
+                                   for x in tokens]})
