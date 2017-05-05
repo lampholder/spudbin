@@ -4,8 +4,7 @@ from spudbin.app import app
 class Ui(object):
 
     @app.route('/potatoes', methods=['GET'])
-    @staticmethod
-    def submit_tokens():
+    def submit_tokens(self):
         """UI for submitting tokens"""
         return 'Hello, world', 200
 
