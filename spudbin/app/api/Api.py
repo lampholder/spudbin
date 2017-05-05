@@ -75,7 +75,6 @@ def get_templates():
 def create_template():
     """Upload a new template"""
     with Database.connection() as connection:
-        print 'json=', request.get_json()
         if not Templates.validate_json_template(request.get_json()):
             return 'Invalid template object', 400
         row_id = TEMPLATES.create(Template(pkey=None,
