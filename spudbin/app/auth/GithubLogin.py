@@ -40,10 +40,10 @@ def login_complete():
         connection.commit()
 
     print 'Redirecting to target url:', session['target_url'] if 'target_url' in session else 'Null'
-    response = make_response(redirect(session['target_url'], 302))
-    response.set_cookie('github_login', user['login'])
-    response.set_cookie('github_auth_token', github['access_token'])
-    return response
+    #response = make_response(redirect(session['target_url'], 302))
+    #response.set_cookie('github_login', user['login'])
+    #response.set_cookie('github_auth_token', github['access_token'])
+    return 'Would redirect to %s' % session['target_url'] #response
 
 @app.route('/login')
 def redirect_to_github():
