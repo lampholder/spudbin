@@ -25,4 +25,5 @@ def authenticated(func):
 @authenticated
 def ui_submit_tokens():
     """UI for submitting tokens"""
-    return render_template('record.html', username='xyzzy')
+    username = request.cookies['github_login']
+    return render_template('record.html', username=username)
