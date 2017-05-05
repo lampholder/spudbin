@@ -67,15 +67,17 @@ def is_authed(username):
                              params={'access_token': session['github_token']})
     return auth_test.status_code != 200
 
-def authenticate(username):
+def bauthenticate(username):
     if not is_authed(username):
         return redirect('https://spudb.in/login', code='302')
 
-def authed(func):
+def authenticated(func):
+    """Only checks that this person is who they say they are"""
     @wraps(func)
     def wrapped(*args, **kwargs):
-        username = kwargs['username']
-        token = request.headers.get('github-auth-token')
+        """Wrapper function, obvs"""
+        username = request.headers.get('Github-Login')
+        token = request.headers.get('Github-Auth-Token')
 
         auth_test = requests.get('https://api.github.com/user',
                                  params={'access_token': token})
@@ -84,14 +86,29 @@ def authed(func):
                      'login' in auth_test.json() and
                      auth_test.json()['login'] == username)
         if not is_authed:
-            return 'UNAUTHORISED', 403
+            return 'I don\'t know who you are, or I don\'t believe you are ' + \
+                   'who you say you are.', 401
         return func(*args, **kwargs)
     return wrapped
 
+def authorised(func):
+    """Checks that the user is allowed to do what they're trying to do."""
+    @wraps(func)
+    def wrapped(*args, **kwargs):
+        """Wrapper function, obvs"""
+        if 'username' in kwargs:
+            doer = request.headers.get('Github-Auth-Token')
+            doee = kwargs['username']
+            if doer != doee:
+                # Very simplistic authorisation model right now
+                return 'The person you\'re claiming to be isn\'t allowed to do this', 403
+        return func(*args, **kwargs)
+    return wrapped
 
 # User templates:
 @app.route('/<string:username>/templates', methods=['GET'])
-@authed
+@authenticated
+@authorised
 def get_templates_for_user(username):
     with Database.connection() as connection:
         user = USERS.fetch_by_username(username, connection)
