@@ -40,7 +40,7 @@ def login_complete():
         users.delete_by_username(user['login'], connection)
         users.create(User(pkey=None, username=user['login']), connection)
         connection.commit()
-        return user['login'], session['github_token']
+        return user['login'], response['access_token'], session['github_token']
 
 @app.route('/login')
 def redirect_to_github():
