@@ -56,5 +56,5 @@ def redirect_to_github():
           + '&redirect_uri=%s' \
           + '&state=%s' ) \
           % (client_id, redirect_uri, state)
-    print 'Redirecting to this place on request', redirect_uri
+    print 'Redirecting to this place on request', url
     return redirect(url, code='302')
