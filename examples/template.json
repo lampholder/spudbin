@@ -26,7 +26,7 @@
             "tags": ["group:dendrite", "type:performance", "order:3"]
         },
         {
-            "bucket": "DENDRITE_MAINTENACE",
+            "bucket": "DENDRITE_MAINTENANCE",
             "short_name": "Maintenance",
             "description": "Maintenance for Dendrite",
             "tags": ["group:dendrite", "type:maintenance", "order:4"]
@@ -68,7 +68,7 @@
             "tags": ["group:synapse", "type:performance", "order:3"]
         },
         {
-            "bucket": "SYNAPSE_MAINTENACE",
+            "bucket": "SYNAPSE_MAINTENANCE",
             "short_name": "Maintenance",
             "description": "Maintenance for Synapse",
             "tags": ["group:synapse", "type:maintenace", "order:4"]
@@ -110,7 +110,7 @@
             "tags": ["group:riotweb", "type:performance", "order:3"]
         },
         {
-            "bucket": "RIOTWEB_MAINTENACE",
+            "bucket": "RIOTWEB_MAINTENANCE",
             "short_name": "Maintenance",
             "description": "Maintenance for Riot Web",
             "tags": ["group:riotweb", "type:maintenance", "order:4"]
@@ -152,7 +152,7 @@
             "tags": ["group:irc", "type:performance", "order:3"]
         },
         {
-            "bucket": "IRC_MAINTENACE",
+            "bucket": "IRC_MAINTENANCE",
             "short_name": "Maintenance",
             "description": "Maintenance for IRC Bridges",
             "tags": ["group:irc", "type:maintenance", "order:4"]
@@ -194,7 +194,7 @@
             "tags": ["group:scalar", "type:performance", "order:3"]
         },
         {
-            "bucket": "SCALAR_MAINTENACE",
+            "bucket": "SCALAR_MAINTENANCE",
             "short_name": "Maintenance",
             "description": "Maintenance for Scalar",
             "tags": ["group:scalar", "type:maintenance", "order:4"]
