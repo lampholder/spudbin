@@ -80,7 +80,7 @@ def authed(func):
         auth_test = requests.get('https://api.github.com/user',
                                  params={'access_token': token})
         is_authed = (auth_test.status_code != 200 and
-                     auth_test['login'] == username)
+                     auth_test.json()['login'] == username)
         if not is_authed:
             return 'UNAUTHORISED', 403
         return func(*args, **kwargs)
