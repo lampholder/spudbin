@@ -40,6 +40,8 @@ def login_complete():
         users.create(User(pkey=None, username=user['login']), connection)
         connection.commit()
 
+    print 'fetching destination', 'target_url' in session
+
     response = make_response(redirect(session['target_url'], 302))
     response.set_cookie('github_token', github['access_token'])
     return response

@@ -13,8 +13,9 @@ def authenticated(func):
     @wraps(func)
     def wrapped(*args, **kwargs):
         """PaRapper the wrapper"""
-        if 'github_token' not in session:
-            session.target_url = request.url
+        if 'github_token' not in request.cookies:
+            session['target_url'] = request.url
+            print 'persisting destination', session['target_url']
             return redirect_to_github()
 
         return func(*args, **kwargs)
