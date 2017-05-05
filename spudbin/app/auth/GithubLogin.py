@@ -30,7 +30,6 @@ def login_complete():
                              data=payload, headers={'Accept': 'application/json'}).json()
 
     session['github_token'] = response['access_token']
-    print 'persisting github_token', session['github_token']
 
     user = requests.get('https://api.github.com/user',
                         params={'access_token': response['access_token']}).json()
@@ -41,7 +40,7 @@ def login_complete():
         users.delete_by_username(user['login'], connection)
         users.create(User(pkey=None, username=user['login']), connection)
         connection.commit()
-        return user['login'], response['access_token'], session['github_token']
+        return ', '.join([user['login'], response['access_token'], session['github_token']])
 
 @app.route('/login')
 def redirect_to_github():
