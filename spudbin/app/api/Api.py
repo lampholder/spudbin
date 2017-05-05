@@ -74,14 +74,18 @@ def get_templates():
 @app.route("/templates", methods=['POST'])
 def create_template():
     """Upload a new template"""
+    print 'barp'
     with Database.connection() as connection:
+        print 'yarp'
         if not Templates.validate_json_template(request.get_json()):
             return 'Invalid template object', 400
         row_id = TEMPLATES.create(Template(pkey=None,
                                            template=request.get_json(),
                                            enabled=True),
                                   connection)
+        print 'werp'
         connection.commit()
+        print 'lerp'
         return jsonify(TEMPLATES.fetch_by_pkey(row_id, connection)._asdict())
 
 @app.route("/templates/<int:template_id>", methods=['GET'])
