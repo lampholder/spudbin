@@ -2,6 +2,10 @@ import datetime
 
 from flask import jsonify
 from flask import request
+from flask import session
+from flask import redirect
+
+import requests
 
 from spudbin.app import app
 
@@ -50,7 +54,30 @@ def get_template_by_id(template_id):
         return jsonify(TEMPLATES.fetch_by_pkey(template_id, connection)._asdict())
 
 
+def is_authed(username):
+    if 'github_token' not in session:
+        return False
+    with Database.connection() as connection:
+        users = USERS.fetch_by_username(username, connection)
+    if users is None:
+        return False #XXX: Gotta do better than this
+    auth_test = requests.get('https://api.github.com/user',
+                             params={'access_token': session['github_token']})
+    return auth_test.status_code != 200
+
+def authenticate(username):
+    if not is_authed(username):
+        return redirect('https://spudb.in/login', code='302')
+
+def authed(func):
+    def decorated(*args, **kwargs):
+        print 'Calling a cool wrapped function'
+        return func(*args, **kwargs)
+    return decorated
+
+
 # User templates:
+@authed
 @app.route('/<string:username>/templates', methods=['GET'])
 def get_templates_for_user(username):
     with Database.connection() as connection:
