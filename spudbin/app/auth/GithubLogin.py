@@ -2,6 +2,7 @@ import uuid
 
 import requests
 
+from flask import session
 from flask import redirect
 from flask import request
 from flask import current_app
@@ -12,6 +13,8 @@ from spudbin.storage import Users, User
 from spudbin.app import app
 
 users = Users()
+
+#XXX: This is smelly:
 state_tracker = []
 
 @app.route('/callback/', methods=['GET'])
@@ -26,16 +29,18 @@ def login_complete():
     response = requests.post('https://github.com/login/oauth/access_token',
                              data=payload, headers={'Accept': 'application/json'}).json()
 
+    session['github_token'] = response['access_token']
+
     user = requests.get('https://api.github.com/user',
                         params={'access_token': response['access_token']}).json()
 
     state_tracker.remove(request.args['state'])
 
     with Database.connection() as connection:
-	users.delete_by_username(user['login'], connection)
-	users.create(User(pkey=None, username=user['login']), connection)
+        users.delete_by_username(user['login'], connection)
+        users.create(User(pkey=None, username=user['login']), connection)
         connection.commit()
-	return user['login']
+        return user['login'], session['github_token']
 
 @app.route('/login')
 def redirect_to_github():
