@@ -1,10 +1,12 @@
 """All the UI gubbins"""
+from flask import render_template
+
 from spudbin.app import app
 
 @app.route('/potatoes', methods=['GET'])
 def ui_submit_tokens():
     """UI for submitting tokens"""
-    return 'Hello, world', 200
+    return render_template('templates/hello_world.html', my_string='xyzzy')
 
 
 #def is_authed(username):
