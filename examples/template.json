@@ -205,7 +205,6 @@
             "description": "Code Review for Scalar",
             "tags": ["group:scalar", "type:code_review", "order:5"]
         },
-        },
         {
             "bucket": "SCALAR_OTHER",
             "short_name": "Other",
@@ -218,6 +217,88 @@
             "description": "Other time spent on other things",
             "tags": ["group:other", "type:other", "order:6"]
         }
+    ],
+    "layout": [
+        [
+            {"type": "heading", "value": "Bucket"},
+            {"type": "heading", "value": "Description"},
+            {"type": "heading", "value": "Dendrite"},
+            {"type": "heading", "value": "Synapse"},
+            {"type": "heading", "value": "Riot Web"},
+            {"type": "heading", "value": "IRC Bridge"},
+            {"type": "heading", "value": "Scalar"},
+            {"type": "heading", "value": "Other"}
+        ],
+        [
+            {"type": "heading", "value": "Features"},
+            {"type": "text", "value": "Features are good things to have"},
+            {"type": "bucket", "value": "DENDRITE_FEATURES"},
+            {"type": "bucket", "value": "SYNAPSE_FEATURES"},
+            {"type": "bucket", "value": "RIOTWEB_FEATURES"},
+            {"type": "bucket", "value": "IRC_FEATURES"},
+            {"type": "bucket", "value": "SCALAR_FEATURES"},
+            {"type": "text", "value": ""}
+        ],
+        [
+            {"type": "heading", "value": "Bugfixes"},
+            {"type": "text", "value": "Bugfixes are good things to have"},
+            {"type": "bucket", "value": "DENDRITE_BUGFIXES"},
+            {"type": "bucket", "value": "SYNAPSE_BUGFIXES"},
+            {"type": "bucket", "value": "RIOTWEB_BUGFIXES"},
+            {"type": "bucket", "value": "IRC_BUGFIXES"},
+            {"type": "bucket", "value": "SCALAR_BUGFIXES"},
+            {"type": "text", "value": ""}
+        ],
+        [
+            {"type": "heading", "value": "Operational Issues"},
+            {"type": "text", "value": "Operational Issues are bad things to have"},
+            {"type": "bucket", "value": "DENDRITE_OPERATIONAL_ISSUES"},
+            {"type": "bucket", "value": "SYNAPSE_OPERATIONAL_ISSUES"},
+            {"type": "bucket", "value": "RIOTWEB_OPERATIONAL_ISSUES"},
+            {"type": "bucket", "value": "IRC_OPERATIONAL_ISSUES"},
+            {"type": "bucket", "value": "SCALAR_OPERATIONAL_ISSUES"},
+            {"type": "text", "value": ""}
+        ],
+        [
+            {"type": "heading", "value": "Performance"},
+            {"type": "text", "value": "What a performance"},
+            {"type": "bucket", "value": "DENDRITE_PERFORMANCE"},
+            {"type": "bucket", "value": "SYNAPSE_PERFORMANCE"},
+            {"type": "bucket", "value": "RIOTWEB_PERFORMANCE"},
+            {"type": "bucket", "value": "IRC_PERFORMANCE"},
+            {"type": "bucket", "value": "SCALAR_PERFORMANCE"},
+            {"type": "text", "value": ""}
+        ],
+        [
+            {"type": "heading", "value": "Maintenance"},
+            {"type": "text", "value": "It's good to maintain things"},
+            {"type": "bucket", "value": "DENDRITE_MAINTENANCE"},
+            {"type": "bucket", "value": "SYNAPSE_MAINTENANCE"},
+            {"type": "bucket", "value": "RIOTWEB_MAINTENANCE"},
+            {"type": "bucket", "value": "IRC_MAINTENANCE"},
+            {"type": "bucket", "value": "SCALAR_MAINTENANCE"},
+            {"type": "text", "value": ""}
+        ],
+        [
+            {"type": "heading", "value": "Code Review"},
+            {"type": "text", "value": "It's good to review the codes"},
+            {"type": "bucket", "value": "DENDRITE_CODE_REVIEW"},
+            {"type": "bucket", "value": "SYNAPSE_CODE_REVIEW"},
+            {"type": "bucket", "value": "RIOTWEB_CODE_REVIEW"},
+            {"type": "bucket", "value": "IRC_CODE_REVIEW"},
+            {"type": "bucket", "value": "SCALAR_CODE_REVIEW"},
+            {"type": "text", "value": ""}
+        ],
+        [
+            {"type": "heading", "value": "Other"},
+            {"type": "text", "value": "Stuff that doesn't fit in elsewhere"},
+            {"type": "bucket", "value": "DENDRITE_OTHER"},
+            {"type": "bucket", "value": "SYNAPSE_OTHER"},
+            {"type": "bucket", "value": "RIOTWEB_OTHER"},
+            {"type": "bucket", "value": "IRC_OTHER"},
+            {"type": "bucket", "value": "SCALAR_OTHER"},
+            {"type": "bucket", "value": "GENERIC_OTHER"}
+        ]
     ]
 }
 

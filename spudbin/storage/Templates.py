@@ -27,13 +27,23 @@ class Templates(Store):
 
     @staticmethod
     def validate_json_template(template):
-        return 'maxTokens' in template \
+        valid_format = 'maxTokens' in template \
            and isinstance(template['maxTokens'], int) \
            and template['maxTokens'] > 0 \
            and 'buckets' in template \
            and isinstance(template['buckets'], list) \
            and len(template['buckets']) > 0 \
-           and len(filter(lambda x: 'bucket' not in x, template['buckets'])) == 0
+           and len(filter(lambda x: 'bucket' not in x,
+                          template['buckets'])) == 0
+
+        if 'layout' in template:
+            buckets = [bucket['bucket'] for bucket in template['buckets']]
+            for row in template['layout']:
+                for item in row:
+                    if item['type'] == 'bucket' and item['value'] not in buckets:
+                        print 'Layout references unknown bucket:', item['value']
+                        return False
+        return valid_format
 
     def create(self, template, connection):
         sql = 'insert into templates(pkey, template, enabled) values (?,?,?)'

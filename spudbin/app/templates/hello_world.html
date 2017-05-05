@@ -5,6 +5,7 @@
 
 <table id="tokens">
     <thead>
+        <tr><th>Bucket name</th></tr>
     </thead>
     <tbody>
     </tbody>
@@ -13,10 +14,16 @@
 <script type="text/javascript">
 
 $( document ).ready(function() {
+    var makeRowFromBucket = function(bucket) {
+        return $('<tr><td>' + bucket.bucket + '</td></tr>');
+    }
     $.ajax({
       url: 'https://spudb.in/lampholder/templates/2017-05-05',
       success: function(data, status) {
-                   alert('success');
+                   var table = $('table#tokens');
+                   data.template.buckets.forEach(function(entry) {
+                       table.append(makeRowFromBucket(entry));
+                   });
                }
     });
 });
