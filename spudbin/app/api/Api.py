@@ -1,5 +1,7 @@
 import datetime
 
+from functools import wraps
+
 from flask import jsonify
 from flask import request
 from flask import session
@@ -70,10 +72,11 @@ def authenticate(username):
         return redirect('https://spudb.in/login', code='302')
 
 def authed(func):
-    def decorated(*args, **kwargs):
+    @wraps(func)
+    def wrapped(*args, **kwargs):
         print 'Calling a cool wrapped function'
         return func(*args, **kwargs)
-    return decorated
+    return wrapped
 
 
 # User templates:
