@@ -7,3 +7,4 @@ from spudbin.util import DateConverter
 app = Flask(__name__)
 
 app.url_map.converters['date'] = DateConverter
+app.secret_key = 'He\'s a lumberjack and he\'s okay'
