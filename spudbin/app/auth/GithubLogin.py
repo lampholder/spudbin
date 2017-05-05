@@ -44,7 +44,7 @@ def login_complete():
 
     response = make_response(redirect(session['target_url'], 302))
     response.set_cookie('github_login', user['login'])
-    response.set_cookie('github_token', github['access_token'])
+    response.set_cookie('github_auth_token', github['access_token'])
     return response
 
 @app.route('/login')
