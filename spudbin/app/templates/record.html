@@ -59,8 +59,7 @@ $( document ).ready(function() {
                           request.setRequestHeader('Github-Auth-Token', $.cookie('github_auth_token'));
                       },
           success: function(data, status) {
-                       alert(data);
-                       alert(status);
+                       window.location.href = 'https://spudb.in/success';
                    }
         });
     });

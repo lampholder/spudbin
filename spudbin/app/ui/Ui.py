@@ -27,3 +27,8 @@ def ui_submit_tokens():
     """UI for submitting tokens"""
     username = request.cookies['github_login']
     return render_template('record.html', username=username)
+
+@app.route('/success', methods=['GET'])
+def ui_success():
+    """What we show when people have successfully submitted tokens"""
+    return "YOU ARE A GOOD PERSON THANKS"
