@@ -97,9 +97,8 @@ def authorised(func):
     def wrapped(*args, **kwargs):
         """Wrapper function, obvs"""
         if 'username' in kwargs:
-            doer = request.headers.get('Github-Auth-Token')
+            doer = request.headers.get('Github-Login')
             doee = kwargs['username']
-            print doer, doee, doer == doee
             if doer != doee:
                 # Very simplistic authorisation model right now
                 return 'The person you\'re claiming to be isn\'t allowed to do this', 403
