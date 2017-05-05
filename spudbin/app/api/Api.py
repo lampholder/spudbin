@@ -75,7 +75,7 @@ def authed(func):
     @wraps(func)
     def wrapped(*args, **kwargs):
         print 'Calling a cool wrapped function'
-        return func(*args, **kwargs)
+        return 'werp' #func(*args, **kwargs)
     return wrapped
 
 
