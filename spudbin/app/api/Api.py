@@ -108,7 +108,8 @@ def assign_template_for_user(username, template_id):
                                         user=user,
                                         template=template,
                                         start_date=start_date,
-                                        end_date=None),
+                                        #TODO: something better here.
+                                        end_date=datetime.datetime.strptime('9000-01-01', '%Y-%m-%d')),
                             connection)
         connection.commit()
         return 'OKAY', 200
