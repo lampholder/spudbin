@@ -4,9 +4,9 @@
 <h2>Please submit your tokens for <input type="text" name="date" value="{{date}}" /></h2>
 
 <table id="tokens">
-    <tbody>
-    </tbody>
 </table>
+
+<button id="submit">throw these potatoes</button>
 
 <script type="text/javascript">
 
@@ -37,6 +37,15 @@ $( document ).ready(function() {
                        table.append(makeRowFromLayoutRow(entry));
                    });
                }
+    });
+    $('button#submit').click(function() {
+        var buckets = [];
+        $('table#tokens').find('input[type=text]').each(function(_, element) {
+            if ($(element).val() != "") {
+                tokens.push({'bucket': element.name, 'tokens': $(element).val()});
+            }
+        });
+        console.log(buckets);
     });
 });
 
