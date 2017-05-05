@@ -27,6 +27,14 @@ class Templates(Store):
 
     @staticmethod
     def validate_json_template(template):
+        print 'Validating template:'
+        print 'Contains maxTokens:', 'maxTokens' in template
+        print 'maxTokens is integer:', isinstance(template['maxTokens'], int)
+        print 'maxTokens is > 0:', template['maxTokens'] > 0
+        print 'Contains buckets:', 'buckets' in template
+        print 'buckets is a list:', isinstance(template['buckets'], list)
+        print 'buckets > 0:', len(template['buckets']) > 0
+        print 'all buckets contain a bucket:', len(filter(lambda x: 'bucket' not in x, template['buckets'])) == 0
         return 'maxTokens' in template \
            and isinstance(template['maxTokens'], int) \
            and template['maxTokens'] > 0 \
