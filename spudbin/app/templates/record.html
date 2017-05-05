@@ -53,6 +53,7 @@ $( document ).ready(function() {
           url: 'https://spudb.in/' + $.cookie('github_login') + '/tokens/' + date,
           method: 'post',
           data: JSON.stringify({'buckets': buckets}),
+          contentType: 'application/json',
           beforeSend: function(request) {
                           request.setRequestHeader('Github-Login', $.cookie('github_login'));
                           request.setRequestHeader('Github-Auth-Token', $.cookie('github_auth_token'));
