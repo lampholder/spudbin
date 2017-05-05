@@ -1,10 +1,13 @@
 """All the UI gubbins"""
 from spudbin.app import app
 
-@app.route('/potatoes', methods=['GET'])
-def submit_tokens():
-    """UI for submitting tokens"""
-    return 'Hello, world', 200
+class Ui(object):
+
+    @app.route('/potatoes', methods=['GET'])
+    @staticmethod
+    def submit_tokens():
+        """UI for submitting tokens"""
+        return 'Hello, world', 200
 
 
 #def is_authed(username):
