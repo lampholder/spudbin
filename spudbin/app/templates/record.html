@@ -52,6 +52,7 @@ $( document ).ready(function() {
         $.ajax({
           url: 'https://spudb.in/' + $.cookie('github_login') + '/tokens/' + date,
           method: 'post',
+          data: {'buckets': buckets},
           beforeSend: function(request) {
                           request.setRequestHeader('Github-Login', $.cookie('github_login'));
                           request.setRequestHeader('Github-Auth-Token', $.cookie('github_auth_token'));
