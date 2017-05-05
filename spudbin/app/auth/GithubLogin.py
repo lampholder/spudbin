@@ -25,13 +25,12 @@ def login_complete():
                'code': request.args['code'],
                'redirect_uri': 'https://spudb.in/callback/complete',
                'state': request.args['state']}
-    response = requests.post('https://github.com/login/oauth/access_token',
-                             data=payload, headers={'Accept': 'application/json'}).json()
+    github = requests.post('https://github.com/login/oauth/access_token',
+                           data=payload, headers={'Accept': 'application/json'}).json()
 
-    session['github_token'] = response['access_token']
 
     user = requests.get('https://api.github.com/user',
-                        params={'access_token': response['access_token']}).json()
+                        params={'access_token': github['access_token']}).json()
 
     state_tracker.remove(request.args['state'])
 
@@ -39,7 +38,10 @@ def login_complete():
         users.delete_by_username(user['login'], connection)
         users.create(User(pkey=None, username=user['login']), connection)
         connection.commit()
-        return ', '.join([user['login'], response['access_token'], session['github_token']])
+
+    response = redirect(session.target_url, 302)
+    response.set_cookie('github_token', github['access_token'])
+    return response
 
 @app.route('/login')
 def redirect_to_github():

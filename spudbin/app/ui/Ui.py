@@ -2,6 +2,7 @@
 from functools import wraps
 
 from flask import session
+from flask import request
 from flask import render_template
 
 from spudbin.app import app
@@ -13,6 +14,7 @@ def authenticated(func):
     def wrapped(*args, **kwargs):
         """PaRapper the wrapper"""
         if 'github_token' not in session:
+            session.target_url = request.url
             return redirect_to_github()
 
         return func(*args, **kwargs)
