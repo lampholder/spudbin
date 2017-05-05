@@ -2,7 +2,7 @@
 from spudbin.app import app
 
 @app.route('/potatoes', methods=['GET'])
-def ui_submit_tokens(self):
+def ui_submit_tokens():
     """UI for submitting tokens"""
     return 'Hello, world', 200
 
