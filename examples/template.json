@@ -5,217 +5,218 @@
             "bucket": "DENDRITE_FEATURES",
             "short_name": "Features",
             "description": "Features for Dendrite",
-            "tags": ["dendrite"]
+            "tags": ["group:dendrite", "type:features", "order:0"]
         },
         {
             "bucket": "DENDRITE_BUGFIXES",
             "short_name": "Bugfixes",
             "description": "Bugfixes for Dendrite",
-            "tags": ["dendrite"]
+            "tags": ["group:dendrite", "type:bugfixes", "order:1"]
         },
         {
             "bucket": "DENDRITE_OPERATIONAL_ISSUES",
             "short_name": "Operational Issues",
             "description": "Operational Issues with Dendrite",
-            "tags": ["dendrite"]
+            "tags": ["group:dendrite", "type:operational_issues", "order:2"]
         },
         {
             "bucket": "DENDRITE_PERFORMANCE",
             "short_name": "Performance",
             "description": "Performance work for Dendrite",
-            "tags": ["dendrite"]
+            "tags": ["group:dendrite", "type:performance", "order:3"]
         },
         {
             "bucket": "DENDRITE_MAINTENACE",
             "short_name": "Maintenance",
             "description": "Maintenance for Dendrite",
-            "tags": ["dendrite"]
+            "tags": ["group:dendrite", "type:maintenance", "order:4"]
         },
         {
             "bucket": "DENDRITE_CODE_REVIEW",
             "short_name": "Code Review",
             "description": "Code Review for Dendrite",
-            "tags": ["dendrite"]
+            "tags": ["group:dendrite", "type:code_review", "order:5"]
         },
         {
             "bucket": "DENDRITE_OTHER",
             "short_name": "Other",
             "description": "Other time spent on Dendrite",
-            "tags": ["dendrite"]
+            "tags": ["group:dendrite", "type:other", "order:6"]
         },
         {
             "bucket": "SYNAPSE_FEATURES",
             "short_name": "Features",
             "description": "Features for Synapse",
-            "tags": ["synapse"]
+            "tags": ["group:synapse", "type:features", "order:0"]
         },
         {
             "bucket": "SYNAPSE_BUGFIXES",
             "short_name": "Bugfixes",
             "description": "Bugfixes for Synapse",
-            "tags": ["synapse"]
+            "tags": ["group:synapse", "type:bugfixes", "order:1"]
         },
         {
             "bucket": "SYNAPSE_OPERATIONAL_ISSUES",
             "short_name": "Operational Issues",
             "description": "Operational Issues with Synapse",
-            "tags": ["synapse"]
+            "tags": ["group:synapse", "type:operational_issues", "order:2"]
         },
         {
             "bucket": "SYNAPSE_PERFORMANCE",
             "short_name": "Performance",
             "description": "Performance work for Synapse",
-            "tags": ["synapse"]
+            "tags": ["group:synapse", "type:performance", "order:3"]
         },
         {
             "bucket": "SYNAPSE_MAINTENACE",
             "short_name": "Maintenance",
             "description": "Maintenance for Synapse",
-            "tags": ["synapse"]
+            "tags": ["group:synapse", "type:maintenace", "order:4"]
         },
         {
             "bucket": "SYNAPSE_CODE_REVIEW",
             "short_name": "Code Review",
             "description": "Code Review for Synapse",
-            "tags": ["synapse"]
+            "tags": ["group:synapse", "type:code_review", "order:5"]
         },
         {
             "bucket": "SYNAPSE_OTHER",
             "short_name": "Other",
             "description": "Other time spent on Synapse",
-            "tags": ["synapse"]
+            "tags": ["group:synapse", "type:other", "order:6"]
         },
         {
             "bucket": "RIOTWEB_FEATURES",
             "short_name": "Features",
             "description": "Features for Riot Web",
-            "tags": ["riotweb"]
+            "tags": ["group:riotweb", "type:features", "order:0"]
         },
         {
             "bucket": "RIOTWEB_BUGFIXES",
             "short_name": "Bugfixes",
             "description": "Bugfixes for Riot Web",
-            "tags": ["riotweb"]
+            "tags": ["group:riotweb", "type:bugfixes", "order:1"]
         },
         {
             "bucket": "RIOTWEB_OPERATIONAL_ISSUES",
             "short_name": "Operational Issues",
             "description": "Operational Issues with Riot Web",
-            "tags": ["riotweb"]
+            "tags": ["group:riotweb", "type:operational_issues", "order:2"]
         },
         {
             "bucket": "RIOTWEB_PERFORMANCE",
             "short_name": "Performance",
             "description": "Performance work for Riot Web",
-            "tags": ["riotweb"]
+            "tags": ["group:riotweb", "type:performance", "order:3"]
         },
         {
             "bucket": "RIOTWEB_MAINTENACE",
             "short_name": "Maintenance",
             "description": "Maintenance for Riot Web",
-            "tags": ["riotweb"]
+            "tags": ["group:riotweb", "type:maintenance", "order:4"]
         },
         {
             "bucket": "RIOTWEB_CODE_REVIEW",
             "short_name": "Code Review",
             "description": "Code Review for Riot Web",
-            "tags": ["riotweb"]
+            "tags": ["group:riotweb", "type:code_review", "order:5"]
         },
         {
             "bucket": "RIOTWEB_OTHER",
             "short_name": "Other",
             "description": "Other time spent on Riot Web",
-            "tags": ["riotweb"]
+            "tags": ["group:riotweb", "type:other", "order:6"]
         },
         {
             "bucket": "IRC_FEATURES",
             "short_name": "Features",
             "description": "Features for IRC Bridges",
-            "tags": ["irc"]
+            "tags": ["group:irc", "type:features", "order:0"]
         },
         {
             "bucket": "IRC_BUGFIXES",
             "short_name": "Bugfixes",
             "description": "Bugfixes for IRC Bridges",
-            "tags": ["irc"]
+            "tags": ["group:irc", "type:bugfixes", "order:1"]
         },
         {
             "bucket": "IRC_OPERATIONAL_ISSUES",
             "short_name": "Operational Issues",
             "description": "Operational Issues with IRC Bridges",
-            "tags": ["irc"]
+            "tags": ["group:irc", "type:operational_issues", "order:2"]
         },
         {
             "bucket": "IRC_PERFORMANCE",
             "short_name": "Performance",
             "description": "Performance work for IRC Bridges",
-            "tags": ["irc"]
+            "tags": ["group:irc", "type:performance", "order:3"]
         },
         {
             "bucket": "IRC_MAINTENACE",
             "short_name": "Maintenance",
             "description": "Maintenance for IRC Bridges",
-            "tags": ["irc"]
+            "tags": ["group:irc", "type:maintenance", "order:4"]
         },
         {
             "bucket": "IRC_CODE_REVIEW",
             "short_name": "Code Review",
             "description": "Code Review for IRC Bridges",
-            "tags": ["irc"]
+            "tags": ["group:irc", "type:code_review", "order:5"]
         },
         {
             "bucket": "IRC_OTHER",
             "short_name": "Other",
             "description": "Other time spent on IRC Bridges",
-            "tags": ["irc"]
+            "tags": ["group:irc", "type:other", "order:6"]
         },
         {
             "bucket": "SCALAR_FEATURES",
             "short_name": "Features",
             "description": "Features for Scalar",
-            "tags": ["scalar"]
+            "tags": ["group:scalar", "type:features", "order:0"]
         },
         {
             "bucket": "SCALAR_BUGFIXES",
             "short_name": "Bugfixes",
             "description": "Bugfixes for Scalar",
-            "tags": ["scalar"]
+            "tags": ["group:scalar", "type:bugfixes", "order:1"]
         },
         {
             "bucket": "SCALAR_OPERATIONAL_ISSUES",
             "short_name": "Operational Issues",
             "description": "Operational Issues with Scalar",
-            "tags": ["scalar"]
+            "tags": ["group:scalar", "type:operational_issues", "order:2"]
         },
         {
             "bucket": "SCALAR_PERFORMANCE",
             "short_name": "Performance",
             "description": "Performance work for Scalar",
-            "tags": ["scalar"]
+            "tags": ["group:scalar", "type:performance", "order:3"]
         },
         {
             "bucket": "SCALAR_MAINTENACE",
             "short_name": "Maintenance",
             "description": "Maintenance for Scalar",
-            "tags": ["scalar"]
+            "tags": ["group:scalar", "type:maintenance", "order:4"]
         },
         {
             "bucket": "SCALAR_CODE_REVIEW",
             "short_name": "Code Review",
             "description": "Code Review for Scalar",
-            "tags": ["scalar"]
+            "tags": ["group:scalar", "type:code_review", "order:5"]
+        },
         },
         {
             "bucket": "SCALAR_OTHER",
             "short_name": "Other",
             "description": "Other time spent on Scalar",
-            "tags": ["scalar"]
+            "tags": ["group:scalar", "type:other", "order:6"]
         },
         {
             "bucket": "GENERIC_OTHER",
             "short_name": "Other",
             "description": "Other time spent on other things",
-            "tags": ["other"]
+            "tags": ["group:other", "type:other", "order:6"]
         }
     ]
 }
