@@ -6,7 +6,7 @@ from spudbin.app import app
 @app.route('/potatoes', methods=['GET'])
 def ui_submit_tokens():
     """UI for submitting tokens"""
-    return render_template('hello_world.html', my_string='xyzzy')
+    return render_template('potatoes.html', username='xyzzy')
 
 
 #def is_authed(username):

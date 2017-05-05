@@ -4,9 +4,6 @@
 <h2>Please submit your tokens for <input type="text" name="date" value="{{date}}" /></h2>
 
 <table id="tokens">
-    <thead>
-        <tr><th>Bucket name</th></tr>
-    </thead>
     <tbody>
     </tbody>
 </table>
@@ -14,15 +11,30 @@
 <script type="text/javascript">
 
 $( document ).ready(function() {
-    var makeRowFromBucket = function(bucket) {
-        return $('<tr><td>' + bucket.bucket + '</td></tr>');
-    }
+    var makeCellFromLayoutCell = function(layoutCell) {
+        if (layoutCell.type == 'text') {
+            return $('<td>' + layoutCell.value + '</td>');
+        }
+        else if (layoutCell.type == 'heading') {
+            return $('<th>' + layoutCell.value + '</th>');
+        }
+        else if (layoutCell.type == 'bucket') {
+            return $('<td><input type="text" name="' + layoutCell.value + '" /></td>');
+        }
+    };
+    var makeRowFromLayoutRow = function(layoutRow) {
+        var row = $('<tr>');
+        layoutRow.forEach(function(entry) {
+            row.append(makeCellFromLayoutCell(entry));
+        });
+        return row;
+    };
     $.ajax({
       url: 'https://spudb.in/lampholder/templates/2017-05-05',
       success: function(data, status) {
                    var table = $('table#tokens');
-                   data.template.buckets.forEach(function(entry) {
-                       table.append(makeRowFromBucket(entry));
+                   data.template.layout.forEach(function(entry) {
+                       table.append(makeRowFromLayoutRow(entry));
                    });
                }
     });
