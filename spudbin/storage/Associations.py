@@ -28,6 +28,7 @@ class Associations(Store):
         self._templates = Templates()
 
     def row_to_entity(self, row, connection):
+        print 'ROW:', row
         return Association(pkey=row['pkey'],
                            user=self._users.fetch_by_pkey(row['user_pkey'], connection),
                            template=self._templates.fetch_by_pkey(row['template_pkey'], connection),
