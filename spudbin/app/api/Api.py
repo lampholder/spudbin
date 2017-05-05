@@ -80,8 +80,8 @@ def authed(func):
 
 
 # User templates:
-@authed
 @app.route('/<string:username>/templates', methods=['GET'])
+@authed
 def get_templates_for_user(username):
     with Database.connection() as connection:
         user = USERS.fetch_by_username(username, connection)
