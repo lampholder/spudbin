@@ -77,6 +77,7 @@ def create_template():
     print 'barp'
     with Database.connection() as connection:
         print 'yarp'
+        print request.get_json()
         if not Templates.validate_json_template(request.get_json()):
             return 'Invalid template object', 400
         row_id = TEMPLATES.create(Template(pkey=None,
