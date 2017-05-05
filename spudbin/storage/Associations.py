@@ -75,19 +75,19 @@ class Associations(Store):
              - any existing associations who start before the end of the new window
                should be delayed
             """
-            sql = 'delete from user_templates where user = ? and start_date >= ? and end_date <= ?'
+            sql = 'delete from user_templates where user_pkey = ? and start_date >= ? and end_date <= ?'
             connection.execute(sql, (association.user.pkey,
                                      association.start_date,
                                      association.end_date, ))
 
-            truncate_sql = 'update user_templates set end_date = ? where user = ? and ' + \
+            truncate_sql = 'update user_templates set end_date = ? where user_pkey = ? and ' + \
                            'start_date < ? and end_date > ?'
             connection.execute(truncate_sql, (association.start_date - 1,
                                               association.user.pkey,
                                               association.start_date,
                                               association.start_date, ))
 
-            delay_sql = 'update user_templates set start_date = ? where user = ? and ' + \
+            delay_sql = 'update user_templates set start_date = ? where user_pkey = ? and ' + \
                         'start_date < ? and end_date > ?'
             connection.execute(delay_sql, (association.end_date + 1,
                                            association.user.pkey,
