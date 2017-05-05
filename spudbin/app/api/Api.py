@@ -4,8 +4,6 @@ from functools import wraps
 
 from flask import jsonify
 from flask import request
-from flask import session
-from flask import redirect
 
 import requests
 
