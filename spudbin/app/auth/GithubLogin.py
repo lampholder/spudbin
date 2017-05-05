@@ -29,7 +29,6 @@ def login_complete():
     github = requests.post('https://github.com/login/oauth/access_token',
                            data=payload, headers={'Accept': 'application/json'}).json()
 
-
     user = requests.get('https://api.github.com/user',
                         params={'access_token': github['access_token']}).json()
 
@@ -40,8 +39,7 @@ def login_complete():
         users.create(User(pkey=None, username=user['login']), connection)
         connection.commit()
 
-    print 'fetching destination', 'target_url' in session
-
+    print 'Redirecting to target url:', session['target_url'] if 'target_url' in session else 'Null'
     response = make_response(redirect(session['target_url'], 302))
     response.set_cookie('github_login', user['login'])
     response.set_cookie('github_auth_token', github['access_token'])
@@ -58,4 +56,5 @@ def redirect_to_github():
           + '&redirect_uri=%s' \
           + '&state=%s' ) \
           % (client_id, redirect_uri, state)
+    print 'Redirecting to this place on request', redirect_uri
     return redirect(url, code='302')
