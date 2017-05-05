@@ -25,52 +25,14 @@ ASSOCIATIONS = Associations()
 RECORDS = Records()
 
 def filter_keys(dic, keys):
+    #TODO: Replace all usage of this with a standard dict comprehension
     filtered = dict(dic)
     for key in keys:
         if key in filtered:
             del filtered[key]
     return filtered
 
-# Templates:
-@app.route('/templates', methods=['GET'])
-def get_templates():
-    with Database.connection() as connection:
-        return jsonify([x._asdict() for x in TEMPLATES.all(connection)])
-
-@app.route("/templates", methods=['POST'])
-def create_template():
-    """Upload a new template"""
-    with Database.connection() as connection:
-        if not Templates.validate_json_template(request.get_json()):
-            return 'Invalid template object', 400
-        row_id = TEMPLATES.create(Template(pkey=None,
-                                           template=request.get_json(),
-                                           enabled=True),
-                                  connection)
-        connection.commit()
-        return jsonify(TEMPLATES.fetch_by_pkey(row_id, connection)._asdict())
-
-@app.route("/templates/<int:template_id>", methods=['GET'])
-def get_template_by_id(template_id):
-    with Database.connection() as connection:
-        return jsonify(TEMPLATES.fetch_by_pkey(template_id, connection)._asdict())
-
-
-def is_authed(username):
-    if 'github_token' not in session:
-        return False
-    with Database.connection() as connection:
-        users = USERS.fetch_by_username(username, connection)
-    if users is None:
-        return False #XXX: Gotta do better than this
-    auth_test = requests.get('https://api.github.com/user',
-                             params={'access_token': session['github_token']})
-    return auth_test.status_code != 200
-
-def bauthenticate(username):
-    if not is_authed(username):
-        return redirect('https://spudb.in/login', code='302')
-
+# Auth decorators
 def authenticated(func):
     """Only checks that this person is who they say they are"""
     @wraps(func)
@@ -105,10 +67,32 @@ def authorised(func):
         return func(*args, **kwargs)
     return wrapped
 
+# Templates:
+@app.route('/templates', methods=['GET'])
+def get_templates():
+    with Database.connection() as connection:
+        return jsonify([x._asdict() for x in TEMPLATES.all(connection)])
+
+@app.route("/templates", methods=['POST'])
+def create_template():
+    """Upload a new template"""
+    with Database.connection() as connection:
+        if not Templates.validate_json_template(request.get_json()):
+            return 'Invalid template object', 400
+        row_id = TEMPLATES.create(Template(pkey=None,
+                                           template=request.get_json(),
+                                           enabled=True),
+                                  connection)
+        connection.commit()
+        return jsonify(TEMPLATES.fetch_by_pkey(row_id, connection)._asdict())
+
+@app.route("/templates/<int:template_id>", methods=['GET'])
+def get_template_by_id(template_id):
+    with Database.connection() as connection:
+        return jsonify(TEMPLATES.fetch_by_pkey(template_id, connection)._asdict())
+
 # User templates:
 @app.route('/<string:username>/templates', methods=['GET'])
-@authenticated
-@authorised
 def get_templates_for_user(username):
     with Database.connection() as connection:
         user = USERS.fetch_by_username(username, connection)
@@ -139,7 +123,11 @@ def get_template_by_user_date(username, date):
         return jsonify(association.template._asdict())
 
 @app.route("/<string:username>/tokens/<date:date>", methods=['POST'])
+@authenticated
+@authorised
 def submit_tokens(username, date):
+    """Submit tokens for a given day; they are automatically associated with the
+    current active template."""
     with Database.connection() as connection:
         user = USERS.fetch_by_username(username, connection)
         template = ASSOCIATIONS.fetch_by_user_date(user, date, connection).template
@@ -173,6 +161,8 @@ def submit_tokens(username, date):
 
 @app.route("/<string:username>/tokens/<date:date>", methods=['GET'])
 def get_tokens(username, date):
+    """Fetch the tokens submitted for a given day, plus the template against which they
+    were submitted."""
     with Database.connection() as connection:
         user = USERS.fetch_by_username(username, connection)
         tokens = RECORDS.fetch_by_user_date(user, date, connection)
