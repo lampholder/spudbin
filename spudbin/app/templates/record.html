@@ -1,5 +1,4 @@
 <script src="https://code.jquery.com/jquery-3.2.1.js" integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE=" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/jquery.cookie/1.4.1/jquery.cookie.min.js"></script>
 
 <h1>Hello, {{username}}!</h1>
 <h2>Please submit your tokens for <input type="text" name="date" value="{{date}}" /></h2>
@@ -52,6 +51,10 @@ $( document ).ready(function() {
         $.ajax({
           url: 'https://spudb.in/' + $.cookie('github_login') + '/tokens/' + date,
           method: 'post',
+          beforeSend: function(request) {
+                          request.setRequestHeader('Github-Login', $.cookie('github_login'));
+                          request.setRequestHeader('Github-Auth-Token', $.cookie('github_auth_token'));
+                      },
           success: function(data, status) {
                        alert(data);
                        alert(status);
