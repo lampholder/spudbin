@@ -135,6 +135,7 @@ def submit_tokens(username, date):
 
         RECORDS.delete_by_user_date(user, date, connection)
 
+        print request.get_json()
         buckets = request.get_json()['buckets']
 
         total_tokens = sum([x['tokens'] for x in buckets])
