@@ -5,6 +5,7 @@ import requests
 from flask import session
 from flask import redirect
 from flask import request
+from flask import make_response
 
 from spudbin.storage import Database
 from spudbin.storage import Users, User
