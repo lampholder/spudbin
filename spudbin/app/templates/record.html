@@ -46,6 +46,16 @@ $( document ).ready(function() {
             }
         });
         console.log(buckets);
+        var date = '2017-05-05';
+
+        $.ajax({
+          url: 'https://spudb.in/' + $.cookie('github_login') + '/tokens/' + date,
+          method: 'post',
+          success: function(data, status) {
+                       alert(data);
+                       alert(status);
+                   }
+        });
     });
 });
 
