@@ -42,7 +42,7 @@ $( document ).ready(function() {
         var buckets = [];
         $('table#tokens').find('input[type=text]').each(function(_, element) {
             if ($(element).val() != "") {
-                tokens.push({'bucket': element.name, 'tokens': $(element).val()});
+                buckets.push({'bucket': element.name, 'tokens': $(element).val()});
             }
         });
         console.log(buckets);

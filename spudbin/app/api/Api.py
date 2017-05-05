@@ -94,6 +94,8 @@ def get_template_by_id(template_id):
 def get_templates_for_user(username):
     with Database.connection() as connection:
         user = USERS.fetch_by_username(username, connection)
+        #TODO: This chap only _asdict()ifies the first entity - all the children remain namedtuples
+        # and lose their keys :(
         return jsonify([filter_keys(x._asdict(), ['user'])
                         for x in ASSOCIATIONS.fetch_by_user(user, connection)])
 

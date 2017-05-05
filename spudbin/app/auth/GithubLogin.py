@@ -43,6 +43,7 @@ def login_complete():
     print 'fetching destination', 'target_url' in session
 
     response = make_response(redirect(session['target_url'], 302))
+    response.set_cookie('github_login', user['login'])
     response.set_cookie('github_token', github['access_token'])
     return response
 
