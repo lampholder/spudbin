@@ -16,9 +16,6 @@
 
 $( document ).ready(function() {
     var datepicker = $('input[type=text]#date').datepicker({dateFormat: 'yy-mm-dd'});
-    datepicker.on('change', function() {
-        alert(this.value);
-    });
     var makeCellFromLayoutCell = function(layoutCell) {
         if (layoutCell.type == 'text') {
             return $('<td>' + layoutCell.value + '</td>');
@@ -37,14 +34,21 @@ $( document ).ready(function() {
         });
         return row;
     };
-    $.ajax({
-      url: '/api/' + $.cookie('github_login') + '/templates/{{date}}',
-      success: function(data, status) {
-                   var table = $('table#tokens');
-                   data.template.layout.forEach(function(entry) {
-                       table.append(makeRowFromLayoutRow(entry));
-                   });
-               }
+    var loadTemplate = function() {
+        var table = $('table#tokens');
+        table.empty();
+        $.ajax({
+          url: '/api/' + $.cookie('github_login') + '/templates/' + $('input[type=text]#date').val(),
+          success: function(data, status) {
+                       data.template.layout.forEach(function(entry) {
+                           table.append(makeRowFromLayoutRow(entry));
+                       });
+                   }
+        });
+    };
+    loadTemplate();
+    datepicker.on('change', function() {
+        loadTemplate();
     });
     $('button#submit').click(function() {
         var buckets = [];
@@ -53,7 +57,7 @@ $( document ).ready(function() {
                 buckets.push({'bucket': element.name, 'tokens': parseInt($(element).val(), 10)});
             }
         });
-        var date = '2017-05-05';
+        var date = $('input[type=text]#date').val();
 
         $.ajax({
           url: '/api/' + $.cookie('github_login') + '/tokens/' + date,
