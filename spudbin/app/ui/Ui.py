@@ -1,8 +1,10 @@
 """All the UI gubbins"""
 from functools import wraps
+from datetime import datetime
 
 from flask import session
 from flask import request
+from flask import redirect
 from flask import render_template
 
 from spudbin.app import app
@@ -22,11 +24,19 @@ def authenticated(func):
     return wrapped
 
 @app.route('/', methods=['GET'])
+def ui_root():
+    """Default routing for the root path"""
+    return redirect('/submit', 302)
+
+@app.route('/submit', defaults={'date': None}, methods=['GET'])
+@app.route('/submit/<date:date>', methods=['GET'])
 @authenticated
-def ui_submit_tokens():
+def ui_submit_tokens(date):
     """UI for submitting tokens"""
     username = request.cookies['github_login']
-    return render_template('record.html', username=username)
+    if date is None:
+        date = datetime.today()
+    return render_template('record.html', username=username, date=date)
 
 @app.route('/success', methods=['GET'])
 def ui_success():

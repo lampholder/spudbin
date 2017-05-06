@@ -17,14 +17,14 @@ users = Users()
 #XXX: This is smelly:
 state_tracker = []
 
-@app.route('/callback/', methods=['GET'])
+@app.route('/auth/callback/', methods=['GET'])
 def login_complete():
     if request.args['state'] not in state_tracker:
         raise Exception('Unrecognised state token!')
     payload = {'client_id': '1d4a7a5d9ea0d7d0d2e5',
                'client_secret': '04ba5b5171e39058c37e9729a8106e734f7bbe51',
                'code': request.args['code'],
-               'redirect_uri': 'https://spudb.in/callback/complete',
+               #'redirect_uri': 'https://spudb.in/callback/complete',
                'state': request.args['state']}
     github = requests.post('https://github.com/login/oauth/access_token',
                            data=payload, headers={'Accept': 'application/json'}).json()
@@ -44,16 +44,16 @@ def login_complete():
     response.set_cookie('github_auth_token', github['access_token'])
     return response
 
-@app.route('/login')
+@app.route('/auth/login')
 def redirect_to_github():
     client_id = '1d4a7a5d9ea0d7d0d2e5'
-    redirect_uri = 'https://spudb.in/callback/'
+    #redirect_uri = 'https://spudb.in/callback/'
     state = str(uuid.uuid4())
     state_tracker.append(state)
     url = ( 'https://github.com/login/oauth/authorize' \
           + '?client_id=%s' \
-          + '&redirect_uri=%s' \
+         # + '&redirect_uri=%s' \
           + '&state=%s' ) \
-          % (client_id, redirect_uri, state)
+          % (client_id, state)
     print 'Redirecting to this place on request', url
     return redirect(url, code='302')

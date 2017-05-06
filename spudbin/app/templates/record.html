@@ -15,7 +15,7 @@
 <script type="text/javascript">
 
 $( document ).ready(function() {
-    $('input[type=text]#date').datepicker();
+    $('input[type=text]#date').datepicker({dateFormat: 'yyyy-mm-dd'});
     var makeCellFromLayoutCell = function(layoutCell) {
         if (layoutCell.type == 'text') {
             return $('<td>' + layoutCell.value + '</td>');
@@ -35,7 +35,7 @@ $( document ).ready(function() {
         return row;
     };
     $.ajax({
-      url: 'https://spudb.in/lampholder/templates/2017-05-05',
+      url: '/api/templates/{{date}}',
       success: function(data, status) {
                    var table = $('table#tokens');
                    data.template.layout.forEach(function(entry) {
@@ -53,7 +53,7 @@ $( document ).ready(function() {
         var date = '2017-05-05';
 
         $.ajax({
-          url: 'https://spudb.in/' + $.cookie('github_login') + '/tokens/' + date,
+          url: '/api/' + $.cookie('github_login') + '/tokens/' + date,
           method: 'post',
           data: JSON.stringify({'buckets': buckets}),
           contentType: 'application/json',
@@ -62,7 +62,7 @@ $( document ).ready(function() {
                           request.setRequestHeader('Github-Auth-Token', $.cookie('github_auth_token'));
                       },
           success: function(data, status) {
-                       window.location.href = 'https://spudb.in/success';
+                       window.location.href = '/success';
                    }
         });
     });
