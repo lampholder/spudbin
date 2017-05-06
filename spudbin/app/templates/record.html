@@ -34,21 +34,34 @@ $( document ).ready(function() {
         });
         return row;
     };
-    var loadTemplate = function() {
+    var loadTable = function() {
         var table = $('table#tokens');
         table.empty();
         $.ajax({
-          url: '/api/' + $.cookie('github_login') + '/templates/' + $('input[type=text]#date').val(),
-          success: function(data, status) {
-                       data.template.layout.forEach(function(entry) {
-                           table.append(makeRowFromLayoutRow(entry));
-                       });
-                   }
+            url: '/api/' + $.cookie('github_login') + '/templates/' + $('input[type=text]#date').val(),
+            success: function(data, status) {
+                         data.template.layout.forEach(function(entry) {
+                             table.append(makeRowFromLayoutRow(entry));
+                         });
+                         data.buckets.forEach(function(entry) {
+                             $('input[type=text]#' + entry.bucket).val(entry.tokens);
+                         });
+                     },
+            failure: function() {
+                $.ajax({
+                    url: '/api/' + $.cookie('github_login') + '/templates/' + $('input[type=text]#date').val(),
+                    success: function(data, status) {
+                        data.template.layout.forEach(function(entry) {
+                            table.append(makeRowFromLayoutRow(entry));
+                        });
+                    }
+                });
+          }
         });
     };
-    loadTemplate();
+    loadTable();
     datepicker.on('change', function() {
-        loadTemplate();
+        loadTable();
     });
     $('button#submit').click(function() {
         var buckets = [];

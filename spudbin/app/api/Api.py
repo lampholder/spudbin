@@ -172,9 +172,10 @@ def get_tokens(username, date):
 
         template_pkeys = list(set([x.template.pkey for x in tokens]))
         if len(template_pkeys) == 0:
-            return '{}', 200
+            return '{}', 404
         elif len(template_pkeys) > 1:
-            return 'ZOMG tokens filed for multiple templates on the same day D:', 500
+            return jsonify({'result': 'error',
+                            'message': 'ZOMG tokens filed for multiple templates on the same day D:'}), 500
 
         template = TEMPLATES.fetch_by_pkey(template_pkeys[0], connection)
 
