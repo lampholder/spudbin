@@ -137,14 +137,13 @@ def submit_tokens(username, date):
         user = USERS.fetch_by_username(username, connection)
         template = ASSOCIATIONS.fetch_by_user_date(user, date, connection).template
 
-        RECORDS.delete_by_user_date(user, date, connection)
-
-        print request.get_json()
         buckets = request.get_json()['buckets']
 
         total_tokens = sum([x['tokens'] for x in buckets])
         if total_tokens > template.maxTokens:
             return 'Too many tokens submitted; maximum is %s' % template.maxTokens, 403
+
+        RECORDS.delete_by_user_date(user, date, connection)
 
         template_buckets = [x['bucket'] for x in template.buckets]
         for allocation in buckets:
