@@ -38,7 +38,7 @@ $( document ).ready(function() {
         var table = $('table#tokens');
         table.empty();
         $.ajax({
-            url: '/api/' + $.cookie('github_login') + '/templates/' + $('input[type=text]#date').val(),
+            url: '/api/' + $.cookie('github_login') + '/tokens/' + $('input[type=text]#date').val(),
             success: function(data, status) {
                          data.template.layout.forEach(function(entry) {
                              table.append(makeRowFromLayoutRow(entry));
