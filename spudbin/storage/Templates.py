@@ -23,11 +23,10 @@ class Templates(Store):
         self._load_schema_if_necessary()
 
     def row_to_entity(self, row, connection):
-        template_json_blob = json.loads(row['template'])
         return Template(pkey=row['pkey'],
-                        buckets=template_json_blob.get('buckets'),
-                        maxTokens=template_json_blob.get('maxTokens'),
-                        layout=template_json_blob.get('layout', None),
+                        buckets=json.loads(row['buckets']),
+                        maxTokens=row['maxTokens'],
+                        layout=json.loads(row['layout']) if row['layout'] is not None else {},
                         enabled=row['enabled'] == 1)
 
     @staticmethod
