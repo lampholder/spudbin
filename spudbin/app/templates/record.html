@@ -1,8 +1,11 @@
 <script src="https://code.jquery.com/jquery-3.2.1.js" integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE=" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/jquery.cookie/1.4.1/jquery.cookie.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://code.jquery.com/ui/1.12.1/themes/cupertino/jquery-ui.css">
+
 
 <h1>Hello, {{username}}!</h1>
-<h2>Please submit your tokens for <input type="text" name="date" value="{{date}}" /></h2>
+<h2>Please submit your tokens for <input type="text" id="date""{{date}}" /></h2>
 
 <table id="tokens">
 </table>
@@ -12,6 +15,7 @@
 <script type="text/javascript">
 
 $( document ).ready(function() {
+    $('input[type=text]#date').datepicker();
     var makeCellFromLayoutCell = function(layoutCell) {
         if (layoutCell.type == 'text') {
             return $('<td>' + layoutCell.value + '</td>');
@@ -46,7 +50,6 @@ $( document ).ready(function() {
                 buckets.push({'bucket': element.name, 'tokens': parseInt($(element).val(), 10)});
             }
         });
-        console.log(buckets);
         var date = '2017-05-05';
 
         $.ajax({
