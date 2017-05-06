@@ -35,7 +35,7 @@ $( document ).ready(function() {
         return row;
     };
     $.ajax({
-      url: '/api/templates/{{date}}',
+      url: '/api/' + $.cookie('github_login') + '/templates/{{date}}',
       success: function(data, status) {
                    var table = $('table#tokens');
                    data.template.layout.forEach(function(entry) {
