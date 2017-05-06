@@ -75,10 +75,13 @@ def get_templates():
 def create_template():
     """Upload a new template"""
     with Database.connection() as connection:
-        if not Templates.validate_json_template(request.get_json()):
+        template = request.get_json()
+        if not Templates.validate_json_template(template):
             return 'Invalid template object', 400
         row_id = TEMPLATES.create(Template(pkey=None,
-                                           template=request.get_json(),
+                                           maxTokens=template['maxTokens'],
+                                           buckets=template['buckets'],
+                                           layout=template.get('layout', None),
                                            enabled=True),
                                   connection)
         connection.commit()

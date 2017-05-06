@@ -2,7 +2,7 @@ import json
 from collections import namedtuple
 from spudbin.storage import Store
 
-Template = namedtuple('Template', ['pkey', 'template', 'enabled'])
+Template = namedtuple('Template', ['pkey', 'buckets', 'maxTokens', 'layout', 'enabled'])
 
 class Templates(Store):
 
@@ -12,7 +12,9 @@ class Templates(Store):
         drop table if exists %s;
         create table %s (
             pkey integer primary key,
-            template text not null,
+            maxTokens integer not null,
+            buckets text not null,
+            layout text,
             enabled integer not null
         );
         """ % (table_name, table_name)
@@ -21,8 +23,11 @@ class Templates(Store):
         self._load_schema_if_necessary()
 
     def row_to_entity(self, row, connection):
+        template_json_blob = json.loads(row['template'])
         return Template(pkey=row['pkey'],
-                        template=json.loads(row['template']),
+                        buckets=template_json_blob.get('buckets'),
+                        maxTokens=template_json_blob.get('maxTokens'),
+                        layout=template_json_blob.get('layout', None),
                         enabled=row['enabled'] == 1)
 
     @staticmethod
@@ -46,12 +51,20 @@ class Templates(Store):
         return valid_format
 
     def create(self, template, connection):
-        sql = 'insert into templates(pkey, template, enabled) values (?,?,?)'
-        cursor = connection.execute(sql, (template.pkey, json.dumps(template.template), 1 if template.enabled else 0,))
+        sql = 'insert into templates(pkey, maxTokens, buckets, layout, enabled) values (?,?,?)'
+        cursor = connection.execute(sql, (template.pkey,
+                                          template.maxTokens,
+                                          json.dumps(template.buckets),
+                                          json.dumps(template.layout),
+                                          1 if template.enabled else 0,))
         insert_id = cursor.lastrowid
         cursor.close()
         return insert_id
 
     def update(self, template, connection):
-        sql = 'update template set template = ?, enabled = ? where pkey = ?'
-        connection.execute(sql, (template.pkey, template.template, 1 if template.enabled else 0,))
+        sql = 'update template set maxtTokens = ?, buckets = ?, layout = ?, enabled = ? where pkey = ?'
+        connection.execute(sql, (template.pkey,
+                                 template.maxTokens,
+                                 json.dumps(template.buckets),
+                                 json.dumps(template.layout),
+                                 1 if template.enabled else 0,))
