@@ -153,7 +153,7 @@ def submit_tokens(username, date):
             record = Record(user=user,
                             date=date,
                             template=template,
-                            code=allocation['bucket'],
+                            bucket=allocation['bucket'],
                             tokens=allocation['tokens'])
 
             RECORDS.create(record, connection)

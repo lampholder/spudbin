@@ -6,7 +6,7 @@ from spudbin.storage import Store
 from spudbin.storage import Users
 from spudbin.storage import Templates
 
-Record = namedtuple('Record', ['user', 'date', 'template', 'code', 'tokens'])
+Record = namedtuple('Record', ['user', 'date', 'template', 'bucket', 'tokens'])
 
 class Records(Store):
     """Record tokens for a given day."""
@@ -19,9 +19,9 @@ class Records(Store):
             user_pkey integer not null,
             date text not null,
             template_pkey integer not null,
-            code text not null,
+            bucket text not null,
             tokens integer not null,
-            constraint user_date_code_unique unique(user_pkey, date, code)
+            constraint user_date_bucket_unique unique(user_pkey, date, bucket)
         );
         """ % (table_name, table_name)
 
@@ -34,7 +34,7 @@ class Records(Store):
         return Record(user=self._users.fetch_by_pkey(row['user_pkey'], connection),
                       date=datetime.datetime.strptime(row['date'], '%Y-%m-%d').date(),
                       template=self._templates.fetch_by_pkey(row['template_pkey'], connection),
-                      code=row['code'],
+                      bucket=row['bucket'],
                       tokens=row['tokens'])
 
     def fetch_by_user_date(self, user, date, connection):
@@ -52,12 +52,12 @@ class Records(Store):
 
     def create(self, record, connection):
         """Drop some potatoes in a bin!"""
-        sql = 'insert into records(user_pkey, date, template_pkey, code, tokens) ' + \
+        sql = 'insert into records(user_pkey, date, template_pkey, bucket, tokens) ' + \
               'values (?,?,?,?,?)'
         cursor = connection.execute(sql, (record.user.pkey,
                                           datetime.datetime.strftime(record.date, '%Y-%m-%d'),
                                           record.template.pkey,
-                                          record.code, record.tokens, ))
+                                          record.bucket, record.tokens, ))
         insert_id = cursor.lastrowid
         cursor.close()
         return insert_id
