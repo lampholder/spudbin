@@ -1,6 +1,6 @@
 """All the UI gubbins"""
 from functools import wraps
-from datetime import datetime
+from datetime import date
 
 from flask import session
 from flask import request
@@ -28,15 +28,15 @@ def ui_root():
     """Default routing for the root path"""
     return redirect('/submit', 302)
 
-@app.route('/submit', defaults={'date': None}, methods=['GET'])
-@app.route('/submit/<date:date>', methods=['GET'])
+@app.route('/submit', defaults={'tokendate': None}, methods=['GET'])
+@app.route('/submit/<date:tokendate>', methods=['GET'])
 @authenticated
-def ui_submit_tokens(date):
+def ui_submit_tokens(tokendate):
     """UI for submitting tokens"""
     username = request.cookies['github_login']
-    if date is None:
-        date = datetime.today()
-    return render_template('record.html', username=username, date=date)
+    if tokendate is None:
+        tokendate = date.today()
+    return render_template('record.html', username=username, date=tokendate)
 
 @app.route('/success', methods=['GET'])
 def ui_success():
