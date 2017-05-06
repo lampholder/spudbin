@@ -51,7 +51,7 @@ class Templates(Store):
         return valid_format
 
     def create(self, template, connection):
-        sql = 'insert into templates(pkey, maxTokens, buckets, layout, enabled) values (?,?,?)'
+        sql = 'insert into templates(pkey, maxTokens, buckets, layout, enabled) values (?,?,?,?,?)'
         cursor = connection.execute(sql, (template.pkey,
                                           template.maxTokens,
                                           json.dumps(template.buckets),
