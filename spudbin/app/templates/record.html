@@ -15,7 +15,7 @@
 <script type="text/javascript">
 
 $( document ).ready(function() {
-    $('input[type=text]#date').datepicker({dateFormat: 'yyyy-mm-dd'});
+    $('input[type=text]#date').datepicker({dateFormat: 'yy-mm-dd'});
     var makeCellFromLayoutCell = function(layoutCell) {
         if (layoutCell.type == 'text') {
             return $('<td>' + layoutCell.value + '</td>');
