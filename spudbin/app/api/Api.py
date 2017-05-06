@@ -143,10 +143,10 @@ def submit_tokens(username, date):
         buckets = request.get_json()['buckets']
 
         total_tokens = sum([x['tokens'] for x in buckets])
-        if total_tokens > template.template['maxTokens']:
-            return 'Too many tokens submitted; maximum is %s' % template.template['maxTokens'], 403
+        if total_tokens > template['maxTokens']:
+            return 'Too many tokens submitted; maximum is %s' % template['maxTokens'], 403
 
-        template_buckets = [x['bucket'] for x in template.template['buckets']]
+        template_buckets = [x['bucket'] for x in template['buckets']]
         for allocation in buckets:
             if allocation['bucket'] not in template_buckets:
                 return '%s is not a valid bucket' % allocation['bucket'], 403
