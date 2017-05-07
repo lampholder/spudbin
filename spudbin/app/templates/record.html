@@ -27,7 +27,7 @@ $( document ).ready(function() {
         else if (layoutCell.type == 'bucket') {
             var cell = $('<td></td>');
             cell.disableSelection();
-            var element = $('<span id=\'' + layoutCell.value + '\'>');
+            var element = $('<span class=\'bucket\' id=\'' + layoutCell.value + '\'>');
             var tokon = $('<span class=\'on\'>');
             var tokoff = $('<span class=\'off\'>');
             var value = 0;
