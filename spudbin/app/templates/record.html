@@ -31,15 +31,15 @@ $( document ).ready(function() {
             var value = 0;
             element.set = function(newValue) {
                 if (typeof(newValue) === 'number' && (newValue % 1) === 0) {
-                    this.value = newValue;
+                    value = newValue;
                     tokon.html(new Array(newValue + 1).join('O'));
                     tokoff.html(new Array((maxTokens - newValue) + 1).join('O'));
                 }
             };
             element.set(0);
             cell.click(function() {
-                this.element.set(this.value + 1);
-                alert(this.value);
+                element.set(value + 1);
+                alert(value);
             });
             element.append(tokon);
             element.append(tokoff);
