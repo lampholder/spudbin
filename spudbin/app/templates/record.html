@@ -39,7 +39,10 @@ $( document ).ready(function() {
             cell.click(function() {
                 this.set(this.value + 1);
             });
-            <input type="text" id="' + layoutCell.value + '" /></td>');
+            element.append(tokon);
+            element.append(tokoff);
+            cell.append(element);
+            return cell;
         }
     };
     var makeRowFromLayoutRow = function(layoutRow, maxTokens) {
