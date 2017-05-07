@@ -44,9 +44,11 @@ $( document ).ready(function() {
             element.set(0);
             cell.click(function() {
                 element.set(value + 1);
+                return false;
             });
             cell.contextmenu(function (){
                 element.set(value - 1);
+                return false;
             });
             element.append(tokon);
             element.append(tokoff);
