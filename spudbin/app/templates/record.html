@@ -36,6 +36,7 @@ $( document ).ready(function() {
                     tokoff.html(new Array((maxTokens - newValue) + 1).join('O'));
                 }
             };
+            element.set(0);
             cell.click(function() {
                 this.set(this.value + 1);
             });
