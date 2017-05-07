@@ -30,7 +30,7 @@ $( document ).ready(function() {
             var tokoff = $('<span class=\'off\'>');
             var value = 0;
             element.set = function(newValue) {
-                if (typeof(newValue) === 'number' && (newValue % 1) ===0):
+                if (typeof(newValue) === 'number' && (newValue % 1) === 0) {
                     this.value = newValue;
                     tokon..html(new Array(newValue + 1).join('O'));
                     tokoff.html(new Array((maxTokens - newValue) + 1).join('O'));
