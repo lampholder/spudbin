@@ -40,7 +40,7 @@ $( document ).ready(function() {
                     tokon.html(new Array(newValue + 1).join('O'));
                     tokoff.html(new Array((maxTokens - newValue) + 1).join('O'));
                 }
-            };
+            });
             $(element).data('set')(0);
             cell.click(function() {
                 $(element).data('set')(value + 1);
