@@ -16,7 +16,7 @@
 
 $( document ).ready(function() {
     var datepicker = $('input[type=text]#date').datepicker({dateFormat: 'yy-mm-dd'});
-    var makeCellFromLayoutCell = function(layoutCell) {
+    var makeCellFromLayoutCell = function(layoutCell, maxTokens) {
         if (layoutCell.type == 'text') {
             return $('<td>' + layoutCell.value + '</td>');
         }
@@ -24,13 +24,28 @@ $( document ).ready(function() {
             return $('<th>' + layoutCell.value + '</th>');
         }
         else if (layoutCell.type == 'bucket') {
-            return $('<td><input type="text" id="' + layoutCell.value + '" /></td>');
+            var cell = $('<td></td>');
+            var element = $('<span id=\'' + layoutCell.value + '/'>');
+            var tokon = $('<span class=\'on\'>');
+            var tokoff = $('<span class=\'off\'>');
+            var value = 0;
+            element.set = function(newValue) {
+                if (typeof(newValue) === 'number' && (newValue % 1) ===0):
+                    this.value = newValue;
+                    tokon..html(new Array(newValue + 1).join('O'));
+                    tokoff.html(new Array((maxTokens - newValue) + 1).join('O'));
+                }
+            };
+            cell.click(function() {
+                this.set(this.value + 1);
+            });
+            <input type="text" id="' + layoutCell.value + '" /></td>');
         }
     };
-    var makeRowFromLayoutRow = function(layoutRow) {
+    var makeRowFromLayoutRow = function(layoutRow, maxTokens) {
         var row = $('<tr>');
         layoutRow.forEach(function(entry) {
-            row.append(makeCellFromLayoutCell(entry));
+            row.append(makeCellFromLayoutCell(entry, maxTokens));
         });
         return row;
     };
@@ -40,19 +55,21 @@ $( document ).ready(function() {
         $.ajax({
             url: '/api/' + $.cookie('github_login') + '/tokens/' + $('input[type=text]#date').val(),
             success: function(data, status) {
+                         var maxTokens = data.template.maxTokens;
                          data.template.layout.forEach(function(entry) {
-                             table.append(makeRowFromLayoutRow(entry));
+                             table.append(makeRowFromLayoutRow(entry, maxTokens));
                          });
                          data.tokens.forEach(function(entry) {
-                             $('input[type=text]#' + entry.bucket).val(entry.tokens);
+                             $('span#' + entry.bucket).set(entry.tokens);
                          });
                      },
             error: function() {
                 $.ajax({
                     url: '/api/' + $.cookie('github_login') + '/templates/' + $('input[type=text]#date').val(),
                     success: function(data, status) {
+                        var maxTokens = data.maxTokens;
                         data.layout.forEach(function(entry) {
-                            table.append(makeRowFromLayoutRow(entry));
+                            table.append(makeRowFromLayoutRow(entry, maxTokens));
                         });
                     }
                 });
