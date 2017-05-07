@@ -21,17 +21,12 @@ table {
     font-size: 1.1em;
     border: 1px solid grey;
 }
-span.token {
+span.bucket {
     cursor: pointer;
     font-weight: bold;
     font-size: 20px;
 }
-span.null {
-    font-weight: bold;
-    font-size: 20px;
-    font-family: monospace;
-}
-span.token span.no, span.null {
+span.bucket span.off {
     color: lightgrey;
 }
 .hover { background-color: #eee; }
