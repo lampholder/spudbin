@@ -7,6 +7,8 @@ from spudbin.util import DateConverter
 app = Flask(__name__)
 
 app.url_map.converters['date'] = DateConverter
+app.static_url_path = '/static'
+app.static_folder = 'static'
 
 app.secret_key = 'n\xe1\x87\xaaX\xff\xcb\x07\x10\xec\xac\xccX;\x0e\x1f,\xcd\xb2\x8drKf\xa9'
 

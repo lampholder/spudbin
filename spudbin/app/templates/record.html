@@ -3,6 +3,7 @@
 <script src="https://cdn.jsdelivr.net/jquery.cookie/1.4.1/jquery.cookie.min.js"></script>
 <link rel="stylesheet" type="text/css" href="https://code.jquery.com/ui/1.12.1/themes/cupertino/jquery-ui.css">
 
+<link rel="stylesheet" type="text/css" href="/static/style.css">
 
 <h1>Hello, {{username}}!</h1>
 <h2>Please submit your tokens for <input type="text" id="date" value="{{date}}" /></h2>
@@ -25,6 +26,7 @@ $( document ).ready(function() {
         }
         else if (layoutCell.type == 'bucket') {
             var cell = $('<td></td>');
+            cell.disableSelection();
             var element = $('<span id=\'' + layoutCell.value + '\'>');
             var tokon = $('<span class=\'on\'>');
             var tokoff = $('<span class=\'off\'>');
@@ -42,6 +44,10 @@ $( document ).ready(function() {
             element.set(0);
             cell.click(function() {
                 element.set(value + 1);
+                alert(value);
+            });
+            cell.contextMenu(function (){
+                element.set(value - 1);
                 alert(value);
             });
             element.append(tokon);
