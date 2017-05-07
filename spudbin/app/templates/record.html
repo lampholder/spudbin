@@ -31,7 +31,7 @@ $( document ).ready(function() {
             var tokon = $('<span class=\'on\'>');
             var tokoff = $('<span class=\'off\'>');
             var value = 0;
-            element.set = function(newValue) {
+            $(element).data('set', function(newValue) {
                 if (   typeof(newValue) === 'number'
                     && (newValue % 1) === 0
                     && newValue >= 0
@@ -41,13 +41,13 @@ $( document ).ready(function() {
                     tokoff.html(new Array((maxTokens - newValue) + 1).join('O'));
                 }
             };
-            element.set(0);
+            $(element).data('set')(0);
             cell.click(function() {
-                element.set(value + 1);
+                $(element).data('set')(value + 1);
                 return false;
             });
             cell.contextmenu(function (){
-                element.set(value - 1);
+                $(element).data('set')(value - 1);
                 return false;
             });
             element.append(tokon);
@@ -74,7 +74,7 @@ $( document ).ready(function() {
                              table.append(makeRowFromLayoutRow(entry, maxTokens));
                          });
                          data.tokens.forEach(function(entry) {
-                             $('span#' + entry.bucket).set(entry.tokens);
+                             $('span#' + entry.bucket).data('set')(entry.tokens);
                          });
                      },
             error: function() {
