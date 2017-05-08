@@ -108,7 +108,7 @@ $( document ).ready(function() {
             var value = $(element).data('get')();
 
             if (value != 0) {
-                buckets.push({'bucket': element.id, 'tokens': value, 10});
+                buckets.push({'bucket': element.id, 'tokens': value});
             }
         });
         var date = $('input[type=text]#date').val();
