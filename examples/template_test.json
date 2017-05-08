@@ -231,7 +231,7 @@
         ],
         [
             {"type": "heading", "value": "Features"},
-            {"type": "text", "value": "Delivering new platform/product features (including spec work)"},
+            {"type": "text", "value": "Features are good things to have"},
             {"type": "bucket", "value": "DENDRITE_FEATURES"},
             {"type": "bucket", "value": "SYNAPSE_FEATURES"},
             {"type": "bucket", "value": "RIOTWEB_FEATURES"},
@@ -241,7 +241,7 @@
         ],
         [
             {"type": "heading", "value": "Bugfixes"},
-            {"type": "text", "value": "Fixing bugs."},
+            {"type": "text", "value": "Bugfixes are good things to have"},
             {"type": "bucket", "value": "DENDRITE_BUGFIXES"},
             {"type": "bucket", "value": "SYNAPSE_BUGFIXES"},
             {"type": "bucket", "value": "RIOTWEB_BUGFIXES"},
@@ -251,7 +251,7 @@
         ],
         [
             {"type": "heading", "value": "Operational Issues"},
-            {"type": "text", "value": "Resolving operation issues e.g. hardware failure, responding to an external incident or an <em>immediate</em> performance problem."},
+            {"type": "text", "value": "Operational Issues are bad things to have"},
             {"type": "bucket", "value": "DENDRITE_OPERATIONAL_ISSUES"},
             {"type": "bucket", "value": "SYNAPSE_OPERATIONAL_ISSUES"},
             {"type": "bucket", "value": "RIOTWEB_OPERATIONAL_ISSUES"},
@@ -261,7 +261,7 @@
         ],
         [
             {"type": "heading", "value": "Performance"},
-            {"type": "text", "value": "Work to handle capacity management."},
+            {"type": "text", "value": "What a performance"},
             {"type": "bucket", "value": "DENDRITE_PERFORMANCE"},
             {"type": "bucket", "value": "SYNAPSE_PERFORMANCE"},
             {"type": "bucket", "value": "RIOTWEB_PERFORMANCE"},
@@ -271,7 +271,7 @@
         ],
         [
             {"type": "heading", "value": "Maintenance"},
-            {"type": "text", "value": "Not features or bugfixing per se."},
+            {"type": "text", "value": "It's good to maintain things"},
             {"type": "bucket", "value": "DENDRITE_MAINTENANCE"},
             {"type": "bucket", "value": "SYNAPSE_MAINTENANCE"},
             {"type": "bucket", "value": "RIOTWEB_MAINTENANCE"},
@@ -281,7 +281,7 @@
         ],
         [
             {"type": "heading", "value": "Code Review"},
-            {"type": "text", "value": "Time spent reviewing PRs"},
+            {"type": "text", "value": "It's good to review the codes"},
             {"type": "bucket", "value": "DENDRITE_CODE_REVIEW"},
             {"type": "bucket", "value": "SYNAPSE_CODE_REVIEW"},
             {"type": "bucket", "value": "RIOTWEB_CODE_REVIEW"},
@@ -291,7 +291,7 @@
         ],
         [
             {"type": "heading", "value": "Other"},
-            {"type": "text", "value": "Stuff that doesn't fit anywhere else"},
+            {"type": "text", "value": "Stuff that doesn't fit in elsewhere"},
             {"type": "bucket", "value": "DENDRITE_OTHER"},
             {"type": "bucket", "value": "SYNAPSE_OTHER"},
             {"type": "bucket", "value": "RIOTWEB_OTHER"},
