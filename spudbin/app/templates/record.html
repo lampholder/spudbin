@@ -96,6 +96,7 @@ $( document ).ready(function() {
     };
     loadTable();
     datepicker.on('change', function() {
+        window.history.pushState(this.val, '', '/submit/' + this.val);
         loadTable();
     });
     $('button#submit').click(function() {
