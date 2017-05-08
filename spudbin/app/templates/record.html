@@ -44,6 +44,9 @@ $( document ).ready(function() {
                     tokoff.html(new Array((maxTokens - newValue) + 1).join('O'));
                 }
             });
+            $(element).data('get', function() {
+                return value;
+            });
             $(element).data('set')(0);
             cell.click(function() {
                 $(element).data('set')(value + 1);
@@ -101,9 +104,11 @@ $( document ).ready(function() {
     });
     $('button#submit').click(function() {
         var buckets = [];
-        $('table#tokens').find('input[type=text]').each(function(_, element) {
-            if ($(element).val() != "") {
-                buckets.push({'bucket': element.id, 'tokens': parseInt($(element).val(), 10)});
+        $('table#tokens').find('span.bucket').each(function(_, element) {
+            var value = $(element).data('get')();
+
+            if (value != 0) {
+                buckets.push({'bucket': element.id, 'tokens': value, 10)});
             }
         });
         var date = $('input[type=text]#date').val();
@@ -118,8 +123,7 @@ $( document ).ready(function() {
                           request.setRequestHeader('Github-Auth-Token', $.cookie('github_auth_token'));
           },
           success: function(data, status) {
-                        alert(data); //debugtime
-                       //window.location.href = '/success';
+                       window.location.href = '/success';
           },
           error: function(data, status) {
                      alert('Submission failed due to computer reasons.');
