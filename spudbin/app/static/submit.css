@@ -1,3 +1,7 @@
+body, p {
+    font-family: monospace;
+}
+
 img#gift {
     cursor: pointer;
     object-position: -99999px 99999px;
