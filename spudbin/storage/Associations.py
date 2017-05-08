@@ -77,34 +77,32 @@ class Associations(Store):
             # Delete any associations that are within the new window.
             sql = 'delete from user_templates where user_pkey = ? and start_date >= ? and end_date <= ?'
             connection.execute(sql, (association.user.pkey,
-                                     association.start_date,
-                                     association.end_date, ))
+                                     datetime.datetime.strftime(association.start_date, '%Y-%m-%d'),
+                                     datetime.datetime.strftime(association.end_date, '%Y-%m-%d'), ))
 
             # Truncate an association that starts before the new window and ends within the new window
             truncate_sql = 'update user_templates set end_date = ? where user_pkey = ? and ' + \
                            'start_date < ? and end_date > ?'
-            connection.execute(truncate_sql, (association.start_date - datetime.timedelta(days=1),
+            connection.execute(truncate_sql, (datetime.datetime.strftime(association.start_date - datetime.timedelta(days=1), '%Y-%m-%d'),
                                               association.user.pkey,
-                                              association.start_date,
-                                              association.start_date, ))
+                                              datetime.datetime.strftime(association.start_date, '%Y-%m-%d'),
+                                              datetime.datetime.strftime(association.start_date, '%Y-%m-%d'), ))
 
             # Delay an associatione that starts within the new window and ends outside the new window
             delay_sql = 'update user_templates set start_date = ? where user_pkey = ? and ' + \
                         'start_date < ? and end_date > ?'
-            connection.execute(delay_sql, (association.end_date + datetime.timedelta(days=1),
+            connection.execute(delay_sql, (datetime.datetime.strftime(association.end_date + datetime.timedelta(days=1), '%Y-%m-%d'),
                                            association.user.pkey,
-                                           association.end_date,
-                                           association.end_date, ))
+                                           datetime.datetime.strftime(association.end_date, '%Y-%m-%d'),
+                                           datetime.datetime.strftime(association.end_date, '%Y-%m-%d'), ))
 
             # Insert the new association window
             new_sql = 'insert into user_templates(user_pkey, template_pkey, start_Date, ' + \
                       'end_date) values (?,?,?,?)'
             connection.execute(new_sql, (association.user.pkey,
                                          association.template.pkey,
-                                         association.start_date,
-                                         association.end_date, ))
-
-
+                                         datetime.datetime.strftime(association.start_date, '%Y-%m-%d'),
+                                         datetime.datetime.strftime(association.end_date, '%Y-%m-%d'), ))
 
     def fetch_by_user(self, user, connection):
         """Fetch the template associations for a given user."""
