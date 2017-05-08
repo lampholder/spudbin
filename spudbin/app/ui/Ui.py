@@ -7,6 +7,8 @@ from flask import request
 from flask import redirect
 from flask import render_template
 
+import requests
+
 from spudbin.storage import Database
 
 from spudbin.app import app
@@ -45,14 +47,14 @@ def ui_submit_tokens(tokendate):
     return render_template('record.html', username=username, date=tokendate)
 
 @app.route('/success/<date:date>', methods=['GET'])
-def ui_success():
+def ui_success(date):
     """What we show when people have successfully submitted tokens"""
     with Database.connection() as connection:
         gif = GIFS.fetch_by_date(date, connection)
         if gif is None:
-            new_gif_url = requests.get('http://scrape.3cu.eu/gif').json()['url'];
+            new_gif_url = requests.get('http://scrape.3cu.eu/gif').json()['url']
             GIFS.create(Gif(date=date,
-                            url=new_gif_url));
+                            url=new_gif_url), connection)
             connection.commit()
             gif = GIFS.fetch_by_date(date, connection)
 
