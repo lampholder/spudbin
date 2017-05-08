@@ -1,21 +1,22 @@
-<script src="https://code.jquery.com/jquery-3.2.1.js" integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE=" crossorigin="anonymous"></script>
-
-<link rel="stylesheet" type="text/css" href="/static/submit.css">
-
-<pre>
-THANKING YOU
-IN EXCHANGE, PLEASE ACCEPT THIS POSSIBLY NSFW, RANDOMLY SELECTED "FUNNY" GIF THAT CAME FROM THE INTERNET.
-</pre>
-
-<img id="gift" src="{{gif}}">
-<p>(Click to unwrap the gift of gif)</p>
+<html>
+    <head>
+        <script src="https://code.jquery.com/jquery-3.2.1.js" integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE=" crossorigin="anonymous"></script>
+        <link rel="stylesheet" type="text/css" href="/static/submit.css">
+    </head>
+    <body>
+        <pre>
+            THANKING YOU
+            IN EXCHANGE, PLEASE ACCEPT THIS POSSIBLY NSFW, RANDOMLY SELECTED "FUNNY" GIF THAT CAME FROM THE INTERNET.
+        </pre>
+        <img id="gift" src="{{gif}}">
+        <p>(Click to unwrap the gift of gif)</p>
+    </body>
+</html>
 
 <script type="text/javascript">
-
-$( document ).ready(function() {
-    $('img#gift').click(function() {
-        $(this).css('object-position', '0px 0px');
+    $( document ).ready(function() {
+        $('img#gift').click(function() {
+            $(this).css('object-position', '0px 0px');
+        });
     });
-});
-
 </script>
