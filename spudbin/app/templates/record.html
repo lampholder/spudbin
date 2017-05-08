@@ -11,7 +11,7 @@
 <table id="tokens">
 </table>
 
-<button id="submit">throw these potatoes</button>
+<button id="submit">Submit</button>
 
 <script type="text/javascript">
 
@@ -67,6 +67,7 @@ $( document ).ready(function() {
         return row;
     };
     var loadTable = function() {
+        totalTokens = 0;
         var table = $('table#tokens');
         table.empty();
         $.ajax({
