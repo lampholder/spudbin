@@ -117,6 +117,6 @@ class Associations(Store):
         """Fetch the template association for a given user on a given date."""
         sql = 'select pkey, user_pkey, template_pkey, start_date, end_date ' + \
               'from user_templates where user_pkey = ? and start_date <= ? ' + \
-              'and end_date > ?'
+              'and end_date >= ?'
         cursor = connection.execute(sql, (user.pkey, date, date, ))
         return self.one_or_none(cursor)
