@@ -28,7 +28,6 @@ class Associations(Store):
         self._templates = Templates()
 
     def row_to_entity(self, row, connection):
-        print 'ROW:', row
         return Association(pkey=row['pkey'],
                            user=self._users.fetch_by_pkey(row['user_pkey'], connection),
                            template=self._templates.fetch_by_pkey(row['template_pkey'], connection),
@@ -38,7 +37,6 @@ class Associations(Store):
 
     def update(self, association, connection):
         """Update a user/template association by its pkey."""
-        print 'asked to update to ', association
         sql = 'update user_templates set start_date = ?, end_date = ? where pkey = ?'
         cursor = connection.execute(sql, (datetime.datetime.strftime(association.start_date, '%Y-%m-%d'),
                                     datetime.datetime.strftime(association.end_date, '%Y-%m-%d'),

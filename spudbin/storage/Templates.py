@@ -45,7 +45,6 @@ class Templates(Store):
             for row in template['layout']:
                 for item in row:
                     if item['type'] == 'bucket' and item['value'] not in buckets:
-                        print 'Layout references unknown bucket:', item['value']
                         return False
         return valid_format
 
