@@ -29,13 +29,13 @@ class Gifs(Store):
     def fetch_by_date(self, date, connection):
         """Fetch the gif for a given date."""
         sql = 'select * from gifs where date = ?'
-        cursor = connection.execute(sql, (datetime.datetime.strftime(date, '%Y-%m-%d', )))
+        cursor = connection.execute(sql, (datetime.datetime.strftime(date, '%Y-%m-%d'), ))
         return self.one_or_none(cursor)
 
     def delete_by_date(self, date, connection):
         """Delete gif for a given date."""
         sql = 'delete from %s where date = ?' % self.table_name
-        connection.execute(sql, (datetime.datetime.strftime(date, '%Y-%m-%d'),))
+        connection.execute(sql, (datetime.datetime.strftime(date, '%Y-%m-%d'), ))
 
     def create(self, gif, connection):
         """Store a gif"""
