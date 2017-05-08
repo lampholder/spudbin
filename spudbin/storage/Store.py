@@ -46,12 +46,15 @@ class Store(object):
         """Safely fetches at most one record from the db. If more match the query it
         suggests we have a nasty problem :)"""
         if cursor.rowcount == 0:
+            print 'there are none'
             cursor.close()
             return None
         elif cursor.rowcount > 1:
+            print 'there are ', cursor.rowcount
             cursor.close()
             raise Exception('Multiple rows found for what should have been a unique query.')
         else:
+            print 'it is okay there can be only one'
             row = cursor.fetchone()
             cursor.close()
             return self.row_to_entity(row, cursor.connection)
