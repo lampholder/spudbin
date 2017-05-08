@@ -123,7 +123,7 @@ $( document ).ready(function() {
                           request.setRequestHeader('Github-Auth-Token', $.cookie('github_auth_token'));
           },
           success: function(data, status) {
-                       window.location.href = '/success';
+                       window.location.href = '/success/' + date;
           },
           error: function(data, status) {
                      alert('Submission failed due to computer reasons.');

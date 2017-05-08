@@ -41,7 +41,7 @@ class Gifs(Store):
         """Store a gif"""
         sql = 'insert into gifs(date, url) ' + \
               'values (?,?)'
-        cursor = connection.execute(sql, (gif.date,
+        cursor = connection.execute(sql, (datetime.datetime.strftime(gif.date, '%Y-%m-%d'),
                                           gif.url, ))
         insert_id = cursor.lastrowid
         cursor.close()
