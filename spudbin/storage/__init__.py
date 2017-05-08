@@ -4,3 +4,4 @@ from spudbin.storage.Users import Users, User
 from spudbin.storage.Templates import Templates, Template
 from spudbin.storage.Records import Records, Record
 from spudbin.storage.Associations import Associations, Association
+from spudbin.storage.Gifs import Gifs, Gif

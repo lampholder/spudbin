@@ -7,8 +7,14 @@ from flask import request
 from flask import redirect
 from flask import render_template
 
+from spudbin.storage import Database
+
 from spudbin.app import app
 from spudbin.app.auth.GithubLogin import redirect_to_github
+
+from spudbin.storage import Gifs, Gif
+
+GIFS = Gifs()
 
 def authenticated(func):
     """Checks that we have a github token - if not, bounce via login to get one"""
@@ -38,7 +44,16 @@ def ui_submit_tokens(tokendate):
         tokendate = date.today()
     return render_template('record.html', username=username, date=tokendate)
 
-@app.route('/success', methods=['GET'])
+@app.route('/success/<date:date>', methods=['GET'])
 def ui_success():
     """What we show when people have successfully submitted tokens"""
-    return "YOU ARE A GOOD PERSON THANKS"
+    with Database.connection() as connection:
+        gif = GIFS.fetch_by_date(date, connection)
+        if gif is None:
+            new_gif_url = requests.get('http://scrape.3cu.eu/gif').json()['url'];
+            GIFS.create(Gif(date=date,
+                            url=new_gif_url));
+            connection.commit()
+            gif = GIFS.fetch_by_date(date, connection)
+
+        return "YOU ARE A GOOD PERSON THANKS <img src='%s'>" % gif.url
