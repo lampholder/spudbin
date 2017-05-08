@@ -58,4 +58,4 @@ def ui_success(date):
             connection.commit()
             gif = GIFS.fetch_by_date(date, connection)
 
-        return "YOU ARE A GOOD PERSON THANKS <img src='%s'>" % gif.url
+        return render_template('success.html', gif=gif.url)
