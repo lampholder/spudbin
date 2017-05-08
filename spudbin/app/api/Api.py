@@ -157,7 +157,7 @@ def submit_tokens(username, date):
 
             RECORDS.create(record, connection)
 
-        connection.commit()
+        print connection.commit()
 
         return jsonify({'date': date,
                         'template': template._asdict(),
