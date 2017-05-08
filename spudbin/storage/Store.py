@@ -56,5 +56,6 @@ class Store(object):
         else:
             print 'it is okay there can be only one'
             row = cursor.fetchone()
+            print row
             cursor.close()
             return self.row_to_entity(row, cursor.connection)
