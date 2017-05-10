@@ -12,6 +12,8 @@ import requests
 from spudbin.storage import Database
 
 from spudbin.app import app
+from spudbin.app import config
+
 from spudbin.app.auth.GithubLogin import redirect_to_github
 
 from spudbin.storage import Gifs, Gif
@@ -31,22 +33,22 @@ def authenticated(func):
         return func(*args, **kwargs)
     return wrapped
 
-@app.route('/', methods=['GET'])
+@app.route(config.get('interface', 'application_root') + '/', methods=['GET'])
 def ui_root():
     """Default routing for the root path"""
-    return redirect('/submit', 302)
+    return redirect(config.get('interface', 'application_root') + '/submit', 302)
 
-@app.route('/submit', defaults={'tokendate': None}, methods=['GET'])
-@app.route('/submit/<date:tokendate>', methods=['GET'])
+@app.route(config.get('interface', 'application_root') + '/submit', defaults={'tokendate': None}, methods=['GET'])
+@app.route(config.get('interface', 'application_root') + '/submit/<date:tokendate>', methods=['GET'])
 @authenticated
 def ui_submit_tokens(tokendate):
     """UI for submitting tokens"""
     username = request.cookies['github_login']
     if tokendate is None:
         tokendate = date.today()
-    return render_template('record.html', username=username, date=tokendate)
+    return render_template('record.html', username=username, date=tokendate, application_root=config.get('interface', 'application_root'))
 
-@app.route('/success/<date:date>', methods=['GET'])
+@app.route(config.get('interface', 'application_root') + '/success/<date:date>', methods=['GET'])
 def ui_success(date):
     """What we show when people have successfully submitted tokens"""
     with Database.connection() as connection:
@@ -58,8 +60,14 @@ def ui_success(date):
             connection.commit()
             gif = GIFS.fetch_by_date(date, connection)
 
-        return render_template('success.html', gif=gif.url)
+        return render_template('success.html', gif=gif.url, application_root=config.get('interface', 'application_root'))
 
-@app.route('/available', methods=['GET']):
+@app.route(config.get('interface', 'application_root') + '/available', methods=['GET'])
+def availability():
     """Simple availability check."""
     return "Howdy", 200
+
+@app.route('/tokenizer/available', methods=['GET'])
+def availability2():
+    """Simple availability check."""
+    return "Howdy2", 200

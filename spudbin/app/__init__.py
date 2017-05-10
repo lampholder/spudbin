@@ -4,17 +4,15 @@ import ConfigParser
 from flask import Flask
 
 from spudbin.util import DateConverter
-from spudbin.util import PrefixMiddleware
 
 config = ConfigParser.RawConfigParser()
 config.read('spudbin.conf')
 
-app = Flask(__name__)
-app.wsgi_app = PrefixMiddleware(app.wsgi_app, prefix=config.get('interface', 'application_root'))
+app = Flask(__name__,
+            static_url_path=config.get('interface', 'application_root') + '/static',
+            static_folder='static')
 
 app.url_map.converters['date'] = DateConverter
-app.static_url_path = '/static'
-app.static_folder = 'static'
 
 app.secret_key = 'n\xe1\x87\xaaX\xff\xcb\x07\x10\xec\xac\xccX;\x0e\x1f,\xcd\xb2\x8drKf\xa9'
 

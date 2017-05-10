@@ -8,6 +8,7 @@ from flask import request
 import requests
 
 from spudbin.app import app
+from spudbin.app import config
 
 from spudbin.storage import Database
 from spudbin.storage import Users
@@ -66,12 +67,12 @@ def authorised(func):
     return wrapped
 
 # Templates:
-@app.route('/api/templates', methods=['GET'])
+@app.route(config.get('interface', 'application_root') + '/api/templates', methods=['GET'])
 def get_templates():
     with Database.connection() as connection:
         return jsonify([x._asdict() for x in TEMPLATES.all(connection)])
 
-@app.route("/api/templates", methods=['POST'])
+@app.route(config.get('interface', 'application_root') + "/api/templates", methods=['POST'])
 def create_template():
     """Upload a new template"""
     with Database.connection() as connection:
@@ -87,13 +88,13 @@ def create_template():
         connection.commit()
         return jsonify(TEMPLATES.fetch_by_pkey(row_id, connection)._asdict())
 
-@app.route("/api/templates/<int:template_id>", methods=['GET'])
+@app.route(config.get('interface', 'application_root') + "/api/templates/<int:template_id>", methods=['GET'])
 def get_template_by_id(template_id):
     with Database.connection() as connection:
         return jsonify(TEMPLATES.fetch_by_pkey(template_id, connection)._asdict())
 
 # User templates:
-@app.route('/api/<string:username>/templates', methods=['GET'])
+@app.route(config.get('interface', 'application_root') + '/api/<string:username>/templates', methods=['GET'])
 def get_templates_for_user(username):
     with Database.connection() as connection:
         user = USERS.fetch_by_username(username, connection)
@@ -102,7 +103,7 @@ def get_templates_for_user(username):
         return jsonify([filter_keys(x._asdict(), ['user'])
                         for x in ASSOCIATIONS.fetch_by_user(user, connection)])
 
-@app.route('/api/<string:username>/templates/<int:template_id>', methods=['POST'])
+@app.route(config.get('interface', 'application_root') + '/api/<string:username>/templates/<int:template_id>', methods=['POST'])
 def assign_template_for_user(username, template_id):
     with Database.connection() as connection:
         start_date = datetime.datetime.strptime(request.get_json()['startDate'], '%Y-%m-%d').date()
@@ -120,14 +121,14 @@ def assign_template_for_user(username, template_id):
         return jsonify({'result': 'success',
                         'message': 'Template assigned successfully'})
 
-@app.route("/api/<string:username>/templates/<date:date>", methods=['GET'])
+@app.route(config.get('interface', 'application_root') + "/api/<string:username>/templates/<date:date>", methods=['GET'])
 def get_template_by_user_date(username, date):
     with Database.connection() as connection:
         user = USERS.fetch_by_username(username, connection)
         association = ASSOCIATIONS.fetch_by_user_date(user, date, connection)
         return jsonify(association.template._asdict())
 
-@app.route("/api/<string:username>/tokens/<date:date>", methods=['POST'])
+@app.route(config.get('interface', 'application_root') + "/api/<string:username>/tokens/<date:date>", methods=['POST'])
 @authenticated
 @authorised
 def submit_tokens(username, date):
@@ -162,7 +163,7 @@ def submit_tokens(username, date):
                         'buckets': [filter_keys(x._asdict(), ['user', 'template', 'date'])
                                     for x in RECORDS.fetch_by_user_date(user, date, connection)]})
 
-@app.route("/api/<string:username>/tokens/<date:date>", methods=['GET'])
+@app.route(config.get('interface', 'application_root') + "/api/<string:username>/tokens/<date:date>", methods=['GET'])
 def get_tokens(username, date):
     """Fetch the tokens submitted for a given day, plus the template against which they
     were submitted."""

@@ -3,7 +3,7 @@
 <script src="https://cdn.jsdelivr.net/jquery.cookie/1.4.1/jquery.cookie.min.js"></script>
 <link rel="stylesheet" type="text/css" href="https://code.jquery.com/ui/1.12.1/themes/cupertino/jquery-ui.css">
 
-<link rel="stylesheet" type="text/css" href="/static/style.css">
+<link rel="stylesheet" type="text/css" href="{{application_root}}/static/style.css">
 
 <h1>Hello, {{username}}!</h1>
 <h2>Please submit your tokens for <input type="text" id="date" value="{{date}}" /></h2>
@@ -74,7 +74,7 @@ $( document ).ready(function() {
         var table = $('table#tokens');
         table.empty();
         $.ajax({
-            url: '/api/' + $.cookie('github_login') + '/tokens/' + $('input[type=text]#date').val(),
+            url: '{{application_root}}/api/' + $.cookie('github_login') + '/tokens/' + $('input[type=text]#date').val(),
             success: function(data, status) {
                          var maxTokens = data.template.maxTokens;
                          data.template.layout.forEach(function(entry) {
@@ -86,7 +86,7 @@ $( document ).ready(function() {
                      },
             error: function() {
                 $.ajax({
-                    url: '/api/' + $.cookie('github_login') + '/templates/' + $('input[type=text]#date').val(),
+                    url: '{{application_root}}/api/' + $.cookie('github_login') + '/templates/' + $('input[type=text]#date').val(),
                     success: function(data, status) {
                         var maxTokens = data.maxTokens;
                         data.layout.forEach(function(entry) {
@@ -114,7 +114,7 @@ $( document ).ready(function() {
         var date = $('input[type=text]#date').val();
 
         $.ajax({
-          url: '/api/' + $.cookie('github_login') + '/tokens/' + date,
+          url: '{{application_root}}/api/' + $.cookie('github_login') + '/tokens/' + date,
           method: 'post',
           data: JSON.stringify({'buckets': buckets}),
           contentType: 'application/json',
@@ -123,7 +123,7 @@ $( document ).ready(function() {
                           request.setRequestHeader('Github-Auth-Token', $.cookie('github_auth_token'));
           },
           success: function(data, status) {
-                       window.location.href = '/success/' + date;
+                       window.location.href = '{{application_root}}/success/' + date;
           },
           error: function(data, status) {
                      alert('Submission failed due to computer reasons.');

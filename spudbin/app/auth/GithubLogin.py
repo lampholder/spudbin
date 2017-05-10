@@ -10,21 +10,21 @@ from flask import make_response
 from spudbin.storage import Database
 from spudbin.storage import Users, User
 
-from spudbin.app import app, config
+from spudbin.app import app
+from spudbin.app import config
 
 users = Users()
 
 #XXX: This is smelly:
 state_tracker = []
 
-@app.route('/auth/callback/', methods=['GET'])
+@app.route(config.get('interface', 'application_root') + '/auth/callback/', methods=['GET'])
 def login_complete():
     if request.args['state'] not in state_tracker:
         raise Exception('Unrecognised state token!')
     payload = {'client_id': config.get('github', 'client_id'),
                'client_secret': config.get('github', 'client_secret'),
                'code': request.args['code'],
-               #'redirect_uri': 'https://spudb.in/callback/complete',
                'state': request.args['state']}
     github = requests.post('https://github.com/login/oauth/access_token',
                            data=payload, headers={'Accept': 'application/json'}).json()
@@ -44,15 +44,13 @@ def login_complete():
     response.set_cookie('github_auth_token', github['access_token'])
     return response
 
-@app.route('/auth/login')
+@app.route(config.get('interface', 'application_root') + '/auth/login')
 def redirect_to_github():
-    client_id = '1d4a7a5d9ea0d7d0d2e5'
-    #redirect_uri = 'https://spudb.in/callback/'
+    client_id = config.get('github', 'client_id')
     state = str(uuid.uuid4())
     state_tracker.append(state)
     url = ( 'https://github.com/login/oauth/authorize' \
           + '?client_id=%s' \
-         # + '&redirect_uri=%s' \
           + '&state=%s' ) \
           % (client_id, state)
     print 'Redirecting to this place on request', url
