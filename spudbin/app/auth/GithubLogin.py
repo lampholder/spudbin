@@ -10,7 +10,7 @@ from flask import make_response
 from spudbin.storage import Database
 from spudbin.storage import Users, User
 
-from spudbin.app import app
+from spudbin.app import app, config
 
 users = Users()
 
@@ -21,8 +21,8 @@ state_tracker = []
 def login_complete():
     if request.args['state'] not in state_tracker:
         raise Exception('Unrecognised state token!')
-    payload = {'client_id': '1d4a7a5d9ea0d7d0d2e5',
-               'client_secret': '04ba5b5171e39058c37e9729a8106e734f7bbe51',
+    payload = {'client_id': config.get('github', 'client_id'),
+               'client_secret': config.get('github', 'client_secret'),
                'code': request.args['code'],
                #'redirect_uri': 'https://spudb.in/callback/complete',
                'state': request.args['state']}

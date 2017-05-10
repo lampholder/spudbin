@@ -1,8 +1,12 @@
 """I hate all this voodoo being in a __init__.py file :("""
+import ConfigParser
 
 from flask import Flask
 
 from spudbin.util import DateConverter
+
+config = ConfigParser.RawConfigParser()
+config.read('spudbin.conf')
 
 app = Flask(__name__)
 

@@ -1,8 +1,6 @@
-from spudbin.app import app
-
-from spudbin.app.auth import GithubLogin
-from spudbin.app.api import Api
-from spudbin.app.ui import Ui
+import ConfigParser
+from spudbin.app import app, config
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=80)
+    app.run(host=config.get('interface', 'host'),
+            port=config.get('interface', 'port'))
