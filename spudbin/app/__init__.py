@@ -1,10 +1,16 @@
 """I hate all this voodoo being in a __init__.py file :("""
+import ConfigParser
 
 from flask import Flask
 
 from spudbin.util import DateConverter
 
+config = ConfigParser.RawConfigParser()
+config.read('spudbin.conf')
+
 app = Flask(__name__)
+
+app.config["APPLICATION_ROOT"] = config.get('interface', 'application_root')
 
 app.url_map.converters['date'] = DateConverter
 app.static_url_path = '/static'
