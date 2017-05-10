@@ -10,6 +10,8 @@ config.read('spudbin.conf')
 
 app = Flask(__name__)
 
+app.config["APPLICATION_ROOT"] = config.get('hosting', 'application_root')
+
 app.url_map.converters['date'] = DateConverter
 app.static_url_path = '/static'
 app.static_folder = 'static'
