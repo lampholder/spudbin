@@ -59,3 +59,7 @@ def ui_success(date):
             gif = GIFS.fetch_by_date(date, connection)
 
         return render_template('success.html', gif=gif.url)
+
+@app.route('/available', methods=['GET']):
+    """Simple availability check."""
+    return "Howdy", 200
