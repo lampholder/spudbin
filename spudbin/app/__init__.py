@@ -4,11 +4,13 @@ import ConfigParser
 from flask import Flask
 
 from spudbin.util import DateConverter
+from spudbin.util import PrefixMiddleware
 
 config = ConfigParser.RawConfigParser()
 config.read('spudbin.conf')
 
 app = Flask(__name__)
+app.wsgi_app = PrefixMiddleware(app.wsgi_app, prefix=config.get('interface', 'application_root'))
 
 app.url_map.converters['date'] = DateConverter
 app.static_url_path = '/static'
