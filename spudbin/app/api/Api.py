@@ -122,6 +122,8 @@ def assign_template_for_user(username, template_id):
                         'message': 'Template assigned successfully'})
 
 @app.route(config.get('interface', 'application_root') + "/api/<string:username>/templates/<date:date>", methods=['GET'])
+@authenticated
+@authorised
 def get_template_by_user_date(username, date):
     with Database.connection() as connection:
         user = USERS.fetch_by_username(username, connection)
@@ -164,6 +166,8 @@ def submit_tokens(username, date):
                                     for x in RECORDS.fetch_by_user_date(user, date, connection)]})
 
 @app.route(config.get('interface', 'application_root') + "/api/<string:username>/tokens/<date:date>", methods=['GET'])
+@authenticated
+@authorised
 def get_tokens(username, date):
     """Fetch the tokens submitted for a given day, plus the template against which they
     were submitted."""
