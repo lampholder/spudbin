@@ -74,6 +74,10 @@ $( document ).ready(function() {
         var table = $('table#tokens');
         table.empty();
         $.ajax({
+            beforeSend: function(request) {
+                            request.setRequestHeader('Github-Login', $.cookie('github_login'));
+                            request.setRequestHeader('Github-Auth-Token', $.cookie('github_auth_token'));
+            },
             url: '{{application_root}}/api/' + $.cookie('github_login') + '/tokens/' + $('input[type=text]#date').val(),
             success: function(data, status) {
                          var maxTokens = data.template.maxTokens;
@@ -86,6 +90,10 @@ $( document ).ready(function() {
                      },
             error: function() {
                 $.ajax({
+                    beforeSend: function(request) {
+                                    request.setRequestHeader('Github-Login', $.cookie('github_login'));
+                                    request.setRequestHeader('Github-Auth-Token', $.cookie('github_auth_token'));
+                    },
                     url: '{{application_root}}/api/' + $.cookie('github_login') + '/templates/' + $('input[type=text]#date').val(),
                     success: function(data, status) {
                         var maxTokens = data.maxTokens;
@@ -99,7 +107,7 @@ $( document ).ready(function() {
     };
     loadTable();
     datepicker.on('change', function() {
-        window.history.pushState($(this).val(), '', '/submit/' + $(this).val());
+        window.history.pushState($(this).val(), '', '{{application_root}}/submit/' + $(this).val());
         loadTable();
     });
     $('button#submit').click(function() {
