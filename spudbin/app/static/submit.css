@@ -6,6 +6,6 @@ img#gift {
     cursor: pointer;
     object-position: -99999px 99999px;
     border: 1px solid lightgray;
-    background-image: url('/static/placeholder.png');
+    background-image: url('/tokenizer/static/placeholder.png'); /* le sigh */
     background-size: 100% 100%;
 }
