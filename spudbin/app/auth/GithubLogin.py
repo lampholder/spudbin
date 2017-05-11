@@ -35,8 +35,9 @@ def login_complete():
     state_tracker.remove(request.args['state'])
 
     with Database.connection() as connection:
-        users.delete_by_username(user['login'], connection)
-        users.create(User(pkey=None, username=user['login']), connection)
+        existing_user = users.fetch_by_username(user['login'], connection)
+        if existing_user is None: 
+            users.create(User(pkey=None, username=user['login']), connection)
         connection.commit()
 
     response = make_response(redirect(session['target_url'], 302))
