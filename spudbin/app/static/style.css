@@ -3,6 +3,7 @@ body, p {
 }
 th {
     text-align: left;
+    background-color: #ccc;
 }
 table, tr, td, th {
     border-collapse: collapse;
@@ -61,4 +62,29 @@ div.menu ul li:hover {
 div.menu a {
     text-decoration: none;
     color: black;
+}
+
+/* Row highlight magic */
+
+table {
+  overflow: hidden;
+}
+
+tr:hover td {
+  background-color: #D4EAFF;
+}
+
+td, th {
+  position: relative;
+}
+
+td:hover::after {
+  content: "";
+  position: absolute;
+  background-color: #D4EAFF;
+  left: 0;
+  top: -5000px;
+  height: 10000px;
+  width: 100%;
+  z-index: -1;
 }
