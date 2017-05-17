@@ -65,6 +65,7 @@ div.menu a {
 }
 
 /* Row highlight magic */
+/* Thanks https://css-tricks.com/simple-css-row-column-highlighting/ */
 
 table {
   overflow: hidden;
