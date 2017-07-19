@@ -1,5 +1,6 @@
 """I hate all this voodoo being in a __init__.py file :("""
 import ConfigParser
+import json
 
 from flask import Flask
 
@@ -7,6 +8,8 @@ from spudbin.util import DateConverter
 
 config = ConfigParser.RawConfigParser()
 config.read('spudbin.conf')
+
+admins = tuple(json.loads(config.get('app', 'admin')))
 
 app = Flask(__name__,
             static_url_path=config.get('interface', 'application_root') + '/static',

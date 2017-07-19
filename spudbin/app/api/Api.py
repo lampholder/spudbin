@@ -9,6 +9,7 @@ import requests
 
 from spudbin.app import app
 from spudbin.app import config
+from spudbin.app import admins
 
 from spudbin.storage import Database
 from spudbin.storage import Users
@@ -53,26 +54,43 @@ def authenticated(func):
     return wrapped
 
 def authorised(func):
-    """Checks that the user is allowed to do what they're trying to do."""
+    """Checks that the user is allowed to do what they're trying to do. Very simple perms model -
+    either you're doing an action to yourself, or you're an admin."""
     @wraps(func)
     def wrapped(*args, **kwargs):
         """Wrapper function, obvs"""
         if 'username' in kwargs:
             doer = request.headers.get('Github-Login')
             doee = kwargs['username']
-            if doer != doee:
+            if doer != doee and doer not in admins:
                 # Very simplistic authorisation model right now
                 return 'The person you\'re claiming to be isn\'t allowed to do this', 403
         return func(*args, **kwargs)
     return wrapped
 
+def admin_only(func):
+    """Checks that the username is in the admin set - must always be used in conjunction
+    with @authenticated else it's useless."""
+    @wraps(func)
+    def wrapped(*args, **kwargs):
+        "Wrapper function, obvs"""
+        doer = request.headers.get('Github-Login')
+        if doer not in admins:
+            return 'The person you\'re claiming to be isn\'t allowed to do this', 403
+        return func(*args, **kwargs)
+    return wrapped
+
 # Templates:
 @app.route(config.get('interface', 'application_root') + '/api/templates', methods=['GET'])
+@authenticated
+@admin_only
 def get_templates():
     with Database.connection() as connection:
         return jsonify([x._asdict() for x in TEMPLATES.all(connection)])
 
 @app.route(config.get('interface', 'application_root') + "/api/templates", methods=['POST'])
+@authenticated
+@admin_only
 def create_template():
     """Upload a new template"""
     with Database.connection() as connection:
@@ -89,12 +107,15 @@ def create_template():
         return jsonify(TEMPLATES.fetch_by_pkey(row_id, connection)._asdict())
 
 @app.route(config.get('interface', 'application_root') + "/api/templates/<int:template_id>", methods=['GET'])
+@authenticated
 def get_template_by_id(template_id):
     with Database.connection() as connection:
         return jsonify(TEMPLATES.fetch_by_pkey(template_id, connection)._asdict())
 
 # User templates:
 @app.route(config.get('interface', 'application_root') + '/api/<string:username>/templates', methods=['GET'])
+@authenticated
+@authorised
 def get_templates_for_user(username):
     with Database.connection() as connection:
         user = USERS.fetch_by_username(username, connection)
@@ -104,6 +125,8 @@ def get_templates_for_user(username):
                         for x in ASSOCIATIONS.fetch_by_user(user, connection)])
 
 @app.route(config.get('interface', 'application_root') + '/api/<string:username>/templates/<int:template_id>', methods=['POST'])
+@authenticated
+@authorised
 def assign_template_for_user(username, template_id):
     with Database.connection() as connection:
         start_date = datetime.datetime.strptime(request.get_json()['startDate'], '%Y-%m-%d').date()
