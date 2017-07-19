@@ -1,3 +1,6 @@
 tokens.db
 *.pyc
 spudbin.egg-info/
+dist
+build
+*.conf
