@@ -6,6 +6,7 @@ from flask import session
 from flask import request
 from flask import redirect
 from flask import render_template
+from flask import abort
 
 import requests
 
@@ -38,6 +39,15 @@ def ui_root():
     """Default routing for the root path"""
     return redirect(config.get('interface', 'application_root') + '/submit', 302)
 
+@app.route(config.get('interface', 'application_root') + '/interpolated/<string:filename>', methods=['GET'])
+def interpolated_css(filename):
+    """Handles the annoying problem of static css files not knowing that we're now living in a subdirectory"""
+    whitelist = ['submit.css', 'success.css']
+    print filename in whitelist
+    if filename in whitelist:
+        return render_template(filename, application_root=config.get('interface', 'application_root'))
+    abort(404)
+
 @app.route(config.get('interface', 'application_root') + '/submit', defaults={'tokendate': None}, methods=['GET'])
 @app.route(config.get('interface', 'application_root') + '/submit/<date:tokendate>', methods=['GET'])
 @authenticated
@@ -46,7 +56,7 @@ def ui_submit_tokens(tokendate):
     username = request.cookies['github_login']
     if tokendate is None:
         tokendate = date.today()
-    return render_template('record.html', username=username, date=tokendate, application_root=config.get('interface', 'application_root'))
+    return render_template('submit.html', username=username, date=tokendate, application_root=config.get('interface', 'application_root'))
 
 @app.route(config.get('interface', 'application_root') + '/success/<date:date>', methods=['GET'])
 def ui_success(date):

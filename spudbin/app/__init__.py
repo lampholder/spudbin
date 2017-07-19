@@ -1,15 +1,22 @@
 """I hate all this voodoo being in a __init__.py file :("""
 import ConfigParser
 import json
+import sys
 
 from flask import Flask
 
 from spudbin.util import DateConverter
 
-config = ConfigParser.RawConfigParser()
-config.read('spudbin.conf')
+#TODO: This really doesn't feel like it should be here :(
+if len(sys.argv) != 2:
+    sys.stderr.write('No config file filename provided; please run: python run.py <config_filename>')
+    exit(1)
+config_file = sys.argv[1]
 
-admins = tuple(json.loads(config.get('app', 'admin')))
+config = ConfigParser.RawConfigParser()
+config.read(config_file)
+
+admins = config.get('app', 'admin').split(',')
 
 app = Flask(__name__,
             static_url_path=config.get('interface', 'application_root') + '/static',
