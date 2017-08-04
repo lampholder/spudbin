@@ -211,3 +211,20 @@ def get_tokens(username, date):
                         'template': template._asdict(),
                         'tokens': [filter_keys(x._asdict(), ['user', 'template', 'date'])
                                    for x in tokens]})
+
+@app.route(config.get('interface', 'application_root') + '/api/reports/<string:username>', methods=['GET'])
+@authenticated
+@authorised
+def get_stats(username):
+    """Fetch the aggregated stats over a period."""
+    with Database.connection() as connection:
+        user = USERS.fetch_by_username(username, connection)
+        start = request.args.get('start')
+        end = request.args.get('end')
+        #window = request.args.get('window')
+        for date in [start + datetime.timedelta(n) for n in range (end - start)]:
+            print date
+            print RECORDS.fetch_by_user_date(user, date, connection)
+
+
+
