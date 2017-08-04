@@ -223,10 +223,9 @@ def get_stats(username):
         end = datetime.datetime.strptime(request.args.get('end'), '%Y-%m-%d')
         #window = request.args.get('window')
         for date in [start + datetime.timedelta(n) for n in range((end - start).days)]:
-            day = RECORDS.fetch_by_user_date(user, date, connection)
-            for tokens in day.tokens:
-                print "tokens", tokens
-                #data[tokens['bucket']] += tokens['tokens']
+            records = RECORDS.fetch_by_user_date(user, date, connection)
+            for record in records:
+                data[record.bucket] += record.tokens
         return data
 
 
