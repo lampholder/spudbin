@@ -248,8 +248,7 @@ def get_stats(username):
             slyces[slyce_grouping] += [simplify_record(record) for record in records]
 
         for slyce, record_list in slyces.iteritems():
-            print slyce, record_list
-            for record in records:
+            for record in record_list:
                 total += record[1]
                 if group_by == 'bucket':
                     data[slyce][record[0]] += record[1]
