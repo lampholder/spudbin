@@ -239,23 +239,23 @@ def get_stats(username):
         slyces = defaultdict(list)
         for date, records in record_list.iteritems():
             if time_window == 'week':
-                slyces[date.isocalendar()[1]] += [simplify_record(record) for record in records]
+                slyce_grouping = date.isocalendar()[1]
             elif time_window == 'month':
-                slyces[date.month] += [simplify_record(record) for record in records]
+                slyce_grouping = date.month
+            else:
+                slyce_grouping = 'period'
 
-        return jsonify(slyces)
-#        for slyce, record_list in slyces:
-#            for record in records:
-#                total += record.tokens
-#                if group_by == 'bucket':
-#                    data[record.bucket] = 0
-#                    data[record.bucket] += record.tokens
-#                elif group_by == 'tag':
-#                    tags = [bucket for bucket in record.template.buckets
-#                            if bucket['bucket'] == record.bucket][0]['tags']
-#                    for tag in tags:
-#                        data[tag] += record.tokens
-#        return jsonify({'data': data, 'total': total})
+            slyces[slyce_grouping] += [simplify_record(record) for record in records]
+
+        for slyce, record_list in slyces:
+            for record in records:
+                total += record[1]
+                if group_by == 'bucket':
+                    data[record[0]] += record[1]
+                elif group_by == 'tag':
+                    for tag in record[2]:
+                        data[tag] += record[1]
+        return jsonify({'data': data, 'total': total})
 
 
 
