@@ -247,8 +247,6 @@ def get_stats(username):
 
             slyces[slyce_grouping] += [simplify_record(record) for record in records]
 
-        return jsonify(slyces)
-
         for slyce, record_list in slyces.iteritems():
             for record in record_list:
                 total += record[1]
