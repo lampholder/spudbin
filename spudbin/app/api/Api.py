@@ -216,7 +216,7 @@ def get_tokens(username, date):
 def get_stats(username):
     """Fetch the aggregated stats over a period."""
     from collections import defaultdict
-    data = defaultdict(int)
+    data = defaultdict(lambda: 0)
     with Database.connection() as connection:
         user = USERS.fetch_by_username(username, connection)
         start = datetime.datetime.strptime(request.args.get('start'), '%Y-%m-%d')
