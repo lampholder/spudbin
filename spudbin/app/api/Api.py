@@ -218,6 +218,12 @@ def get_stats(username):
     from collections import defaultdict
     data = defaultdict(int)
     total = 0
+
+    def simplify_record(record):
+        tags = [bucket for bucket in record.template.buckets
+                if bucket['bucket'] == record.bucket][0]['tags']
+        return (record.bucket, record.tokens, record.tags)
+
     with Database.connection() as connection:
         user = USERS.fetch_by_username(username, connection)
         start = datetime.datetime.strptime(request.args.get('start'), '%Y-%m-%d')
@@ -233,9 +239,9 @@ def get_stats(username):
         slyces = defaultdict(list)
         for date, records in record_list.iteritems():
             if time_window == 'week':
-                slyces[date.isocalendar()[1]] += records
+                slyces[date.isocalendar()[1]] += [simplify_record(record) for record in records]
             elif time_window == 'month':
-                slyces[date.month] += records
+                slyces[date.month] += [simplify_record(record) for record in records]
 
         return jsonify(slyces)
         for slyce, record_list in slyces:
