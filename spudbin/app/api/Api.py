@@ -218,7 +218,7 @@ def get_stats(username):
     with Database.connection() as connection:
         user = USERS.fetch_by_username(username, connection)
         start = datetime.datetime.strptime(request.args.get('start'), '%Y-%m-%d')
-        start = datetime.datetime.strptime(request.args.get('end'), '%Y-%m-%d')
+        end = datetime.datetime.strptime(request.args.get('end'), '%Y-%m-%d')
         #window = request.args.get('window')
         for date in [start + datetime.timedelta(n) for n in range (end - start)]:
             print date
