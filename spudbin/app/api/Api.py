@@ -231,7 +231,7 @@ def get_stats(username):
                     data[record.bucket] += record.tokens
                 elif group_by == 'tag':
                     print record.template
-                    tags = [bucket for bucket in record.template.buckets if bucket['bucket'] == record.bucket][0]
+                    tags = [bucket for bucket in record.template.buckets if bucket['bucket'] == record.bucket][0]['tags']
                     for tag in tags:
                         data[tag] += record.tokens
         return jsonify(data)
