@@ -216,7 +216,7 @@ def get_tokens(username, date):
 def get_stats(username):
     """Fetch the aggregated stats over a period."""
     from collections import defaultdict
-    data = defaultdict(int)
+    data = defaultdict(lambda: defaultdict(int))
     total = 0
 
     def simplify_record(record):
@@ -248,13 +248,14 @@ def get_stats(username):
             slyces[slyce_grouping] += [simplify_record(record) for record in records]
 
         for slyce, record_list in slyces.iteritems():
+            print slyce, record_list
             for record in records:
                 total += record[1]
                 if group_by == 'bucket':
-                    data[record[0]] += record[1]
+                    data[slyce][record[0]] += record[1]
                 elif group_by == 'tag':
                     for tag in record[2]:
-                        data[tag] += record[1]
+                        data[slyce][tag] += record[1]
         return jsonify({'data': data, 'total': total})
 
 
