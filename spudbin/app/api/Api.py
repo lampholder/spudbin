@@ -233,9 +233,9 @@ def get_stats(username):
         slyces = defaultdict(list)
         for date, records in record_list.iteritems():
             if time_window == 'week':
-                slyces[date.isocalendar()[1]].append(records)
+                slyces[date.isocalendar()[1]] += records
             elif time_window == 'month':
-                slyces[date.month].append(records)
+                slyces[date.month] += records
 
         return jsonify(slyces)
         for slyce, record_list in slyces:
