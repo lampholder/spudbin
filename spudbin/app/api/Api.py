@@ -220,7 +220,7 @@ def get_stats(username):
         start = datetime.datetime.strptime(request.args.get('start'), '%Y-%m-%d')
         end = datetime.datetime.strptime(request.args.get('end'), '%Y-%m-%d')
         #window = request.args.get('window')
-        for date in [start + datetime.timedelta(n) for n in range((end - start).days())]:
+        for date in [start + datetime.timedelta(n) for n in range((end - start).days)]:
             print date
             print RECORDS.fetch_by_user_date(user, date, connection)
 
