@@ -227,7 +227,7 @@ def get_stats(username):
                 if record.bucket not in data:
                     data[record.bucket] = 0
                 data[record.bucket] += record.tokens
-        return data
+        return jsonify(data)
 
 
 
