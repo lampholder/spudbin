@@ -216,7 +216,6 @@ def get_tokens(username, date):
 def get_stats(username):
     """Fetch the aggregated stats over a period."""
     from collections import defaultdict
-    import json
     data = defaultdict(int)
     with Database.connection() as connection:
         user = USERS.fetch_by_username(username, connection)
@@ -225,9 +224,9 @@ def get_stats(username):
         #window = request.args.get('window')
         for date in [start + datetime.timedelta(n) for n in range((end - start).days)]:
             day = RECORDS.fetch_by_user_date(user, date, connection)
-            print json.dumps(day, indent=2)
-            #for bucket in day.buckets:
-            #    data[bucket['bucket']] += bucket[
+            for tokens in day.tokens:
+                data[tokens['bucket']] += tokens['tokens']
+        return data
 
 
 
