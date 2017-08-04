@@ -225,8 +225,20 @@ def get_stats(username):
         group_by = request.args.get('groupBy')
         time_window = request.args.get('timeWindow')
 
+        record_list = {}
         for date in [start + datetime.timedelta(n) for n in range((end - start).days)]:
             records = RECORDS.fetch_by_user_date(user, date, connection)
+            record_list[date] = records
+
+        slyces = defaultdict(list)
+        for date, records in record_list.iteritems():
+            if time_window == 'week':
+                slyces[date.isocalendar()[1]].append(records)
+            elif time_window == 'month':
+                slyces[date.month].append(records)
+
+        return jsonify(slyces)
+        for slyce, record_list in slyces:
             for record in records:
                 total += record.tokens
                 if group_by == 'bucket':
