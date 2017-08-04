@@ -215,8 +215,7 @@ def get_tokens(username, date):
 @app.route(config.get('interface', 'application_root') + '/api/reports/<string:username>', methods=['GET'])
 def get_stats(username):
     """Fetch the aggregated stats over a period."""
-    from collections import defaultdict
-    data = defaultdict(lambda: 0)
+    data = {}
     with Database.connection() as connection:
         user = USERS.fetch_by_username(username, connection)
         start = datetime.datetime.strptime(request.args.get('start'), '%Y-%m-%d')
@@ -225,6 +224,8 @@ def get_stats(username):
         for date in [start + datetime.timedelta(n) for n in range((end - start).days)]:
             records = RECORDS.fetch_by_user_date(user, date, connection)
             for record in records:
+                if record.bucket not in data:
+                    data[record.bucket] = 0
                 data[record.bucket] += record.tokens
         return data
 
