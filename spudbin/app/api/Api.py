@@ -222,7 +222,7 @@ def get_stats(username):
     def simplify_record(record):
         tags = [bucket for bucket in record.template.buckets
                 if bucket['bucket'] == record.bucket][0]['tags']
-        return (record.bucket, record.tokens, record.tags)
+        return (record.bucket, record.tokens, tags)
 
     with Database.connection() as connection:
         user = USERS.fetch_by_username(username, connection)
@@ -244,18 +244,18 @@ def get_stats(username):
                 slyces[date.month] += [simplify_record(record) for record in records]
 
         return jsonify(slyces)
-        for slyce, record_list in slyces:
-            for record in records:
-                total += record.tokens
-                if group_by == 'bucket':
-                    data[record.bucket] = 0
-                    data[record.bucket] += record.tokens
-                elif group_by == 'tag':
-                    tags = [bucket for bucket in record.template.buckets
-                            if bucket['bucket'] == record.bucket][0]['tags']
-                    for tag in tags:
-                        data[tag] += record.tokens
-        return jsonify({'data': data, 'total': total})
+#        for slyce, record_list in slyces:
+#            for record in records:
+#                total += record.tokens
+#                if group_by == 'bucket':
+#                    data[record.bucket] = 0
+#                    data[record.bucket] += record.tokens
+#                elif group_by == 'tag':
+#                    tags = [bucket for bucket in record.template.buckets
+#                            if bucket['bucket'] == record.bucket][0]['tags']
+#                    for tag in tags:
+#                        data[tag] += record.tokens
+#        return jsonify({'data': data, 'total': total})
 
 
 
