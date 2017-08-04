@@ -215,18 +215,24 @@ def get_tokens(username, date):
 @app.route(config.get('interface', 'application_root') + '/api/reports/<string:username>', methods=['GET'])
 def get_stats(username):
     """Fetch the aggregated stats over a period."""
-    data = {}
+    from collections import defaultdict
+    data = defaultdict(int)
     with Database.connection() as connection:
         user = USERS.fetch_by_username(username, connection)
         start = datetime.datetime.strptime(request.args.get('start'), '%Y-%m-%d')
         end = datetime.datetime.strptime(request.args.get('end'), '%Y-%m-%d')
-        #window = request.args.get('window')
+        group_by = request.args.get('groupBy')
+
         for date in [start + datetime.timedelta(n) for n in range((end - start).days)]:
             records = RECORDS.fetch_by_user_date(user, date, connection)
             for record in records:
-                if record.bucket not in data:
+                if group_by == 'bucket':
                     data[record.bucket] = 0
-                data[record.bucket] += record.tokens
+                    data[record.bucket] += record.tokens
+                elif group_by == 'tag':
+                    tags = [bucket for bucket in record.buckets if bucket['bucket'] == record.bucket][0]
+                    for tag in tags:
+                        data[tag] += record.tokens
         return jsonify(data)
 
 
