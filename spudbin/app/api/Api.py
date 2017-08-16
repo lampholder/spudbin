@@ -215,6 +215,28 @@ def get_tokens(username, date):
 @app.route(config.get('interface', 'application_root') + '/api/reports/<string:username>', methods=['GET'])
 def get_stats(username):
     """Fetch the aggregated stats over a period."""
+    """To play nicely with Google Charts we should output the data as so:
+    {
+      cols: [{id: 'A', label: 'NEW A', type: 'string'},
+             {id: 'B', label: 'B-label', type: 'number'},
+             {id: 'C', label: 'C-label', type: 'date'}
+      ],
+      rows: [{c:[{v: 'a'},
+                 {v: 1.0, f: 'One'},
+                 {v: new Date(2008, 1, 28, 0, 31, 26), f: '2/28/08 12:31 AM'}
+            ]},
+             {c:[{v: 'b'},
+                 {v: 2.0, f: 'Two'},
+                 {v: new Date(2008, 2, 30, 0, 31, 26), f: '3/30/08 12:31 AM'}
+            ]},
+             {c:[{v: 'c'},
+                 {v: 3.0, f: 'Three'},
+                 {v: new Date(2008, 3, 30, 0, 31, 26), f: '4/30/08 12:31 AM'}
+            ]}
+      ],
+      p: {foo: 'hello', bar: 'world!'}
+    }
+    """
     from collections import defaultdict
     data = defaultdict(lambda: defaultdict(int))
     total = 0
@@ -247,15 +269,44 @@ def get_stats(username):
 
             slyces[slyce_grouping] += [simplify_record(record) for record in records]
 
+
+        buckets = set()
+        tags = set()
+
         for slyce, record_list in slyces.iteritems():
+            for record in record_list:
+                bucket = record[0]
+                record_tags = record[2]
+                buckets.add(bucket)
+                for tag in record_tags:
+                    tags.add(tag)
+
+        cols = [{'label': 'week', 'type': 'number'}]
+        for bucket in buckets:
+            cols.append({'label': bucket, 'type': 'number'})
+
+        rows = []
+        for slyce, record_list in slyces.iteritems():
+            records = {}
             for record in record_list:
                 total += record[1]
                 if group_by == 'bucket':
-                    data[slyce][record[0]] += record[1]
-                elif group_by == 'tag':
-                    for tag in record[2]:
-                        data[slyce][tag] += record[1]
-        return jsonify({'data': data, 'total': total})
+                    records[record[0]] = record[1]
+            cells = [{'v': slyce}]
+            for bucket in buckets:
+                if bucket in records:
+                    cells.append({'v': records[bucket]})
+                else:
+	            cells.append(None)
+            rows.append({'c': cells})
+                    #rows.append({'c': [{'v': slyce}, {'v': record[0]}, {'v': record[1]}]})
+                    #data[slyce][record[0]] += record[1]
+                #elif group_by == 'tag':
+                    #for tag in record[2]:
+                        #rows.append({'c': [{'v': slyce}, {'v': tag}, {'v': record[1]}]})
+                        #data[slyce][tag] += record[1]
+        return jsonify({'cols': cols, 'rows': rows})
+        #return jsonify({'data': data, 'total': total})
 
 
 
