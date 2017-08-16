@@ -75,6 +75,8 @@ def get_stats(username):
         return jsonify({'error': 
                         'Invalid timeWindow setting; should be either \'week\', \'month\' or \'period\''}), 400
 
+    tags_to_filter = request.args.get('tags').split(',') if request.args.get('tags') else None
+
     # Fetch the data from the db
     records_list = fetch_simplified_records_for_period(username, start, end)
 
@@ -82,6 +84,8 @@ def get_stats(username):
     cols = [{'label': 'week', 'type': 'number'}]
     if group_by == 'tag':
         groups = get_tags(records_list)
+        if tags_to_filter is not None:
+            groups = [group for group in groups if group in tags_to_filter]
     else:
         groups = get_buckets(records_list)
 
@@ -103,17 +107,17 @@ def get_stats(username):
     for date, records in records_list.iteritems():
         periods[period_map(date)] += records
 
-
-    import json
     rows = []
     for period, records in periods.iteritems():
         tokens = defaultdict(lambda: 0)
         for record in records:
             if group_by == 'bucket':
+                # Bucket doesn't implement tags_to_filter - is that okay?
                 tokens[record.bucket] += record.tokens
             elif group_by == 'tag':
                 for tag in record.tags:
-                    tokens[tag] += record.tokens 
+                    if tags_to_filter is None or tag in tags_to_filter:
+                        tokens[tag] += record.tokens 
 
         cells = [{'v': period}]
         for group in groups:
