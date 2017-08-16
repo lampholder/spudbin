@@ -5,11 +5,11 @@ from functools import wraps
 from flask import jsonify
 from flask import request
 
-import requests
-
 from spudbin.app import app
 from spudbin.app import config
 from spudbin.app import admins
+
+from spudbin.util import authenticated, authorised, admin_only
 
 from spudbin.storage import Database
 from spudbin.storage import Users
@@ -31,54 +31,6 @@ def filter_keys(dic, keys):
         if key in filtered:
             del filtered[key]
     return filtered
-
-# Auth decorators
-def authenticated(func):
-    """Only checks that this person is who they say they are"""
-    @wraps(func)
-    def wrapped(*args, **kwargs):
-        """Wrapper function, obvs"""
-        username = request.headers.get('Github-Login')
-        token = request.headers.get('Github-Auth-Token')
-
-        auth_test = requests.get('https://api.github.com/user',
-                                 params={'access_token': token})
-
-        is_authed = (auth_test.status_code == 200 and
-                     'login' in auth_test.json() and
-                     auth_test.json()['login'] == username)
-        if not is_authed:
-            return 'I don\'t know who you are, or I don\'t believe you are ' + \
-                   'who you say you are.', 401
-        return func(*args, **kwargs)
-    return wrapped
-
-def authorised(func):
-    """Checks that the user is allowed to do what they're trying to do. Very simple perms model -
-    either you're doing an action to yourself, or you're an admin."""
-    @wraps(func)
-    def wrapped(*args, **kwargs):
-        """Wrapper function, obvs"""
-        if 'username' in kwargs:
-            doer = request.headers.get('Github-Login')
-            doee = kwargs['username']
-            if doer != doee and doer not in admins:
-                # Very simplistic authorisation model right now
-                return 'The person you\'re claiming to be isn\'t allowed to do this', 403
-        return func(*args, **kwargs)
-    return wrapped
-
-def admin_only(func):
-    """Checks that the username is in the admin set - must always be used in conjunction
-    with @authenticated else it's useless."""
-    @wraps(func)
-    def wrapped(*args, **kwargs):
-        "Wrapper function, obvs"""
-        doer = request.headers.get('Github-Login')
-        if doer not in admins:
-            return 'The person you\'re claiming to be isn\'t allowed to do this', 403
-        return func(*args, **kwargs)
-    return wrapped
 
 # Templates:
 @app.route(config.get('interface', 'application_root') + '/api/templates', methods=['GET'])
@@ -211,102 +163,3 @@ def get_tokens(username, date):
                         'template': template._asdict(),
                         'tokens': [filter_keys(x._asdict(), ['user', 'template', 'date'])
                                    for x in tokens]})
-
-@app.route(config.get('interface', 'application_root') + '/api/reports/<string:username>', methods=['GET'])
-def get_stats(username):
-    """Fetch the aggregated stats over a period."""
-    """To play nicely with Google Charts we should output the data as so:
-    {
-      cols: [{id: 'A', label: 'NEW A', type: 'string'},
-             {id: 'B', label: 'B-label', type: 'number'},
-             {id: 'C', label: 'C-label', type: 'date'}
-      ],
-      rows: [{c:[{v: 'a'},
-                 {v: 1.0, f: 'One'},
-                 {v: new Date(2008, 1, 28, 0, 31, 26), f: '2/28/08 12:31 AM'}
-            ]},
-             {c:[{v: 'b'},
-                 {v: 2.0, f: 'Two'},
-                 {v: new Date(2008, 2, 30, 0, 31, 26), f: '3/30/08 12:31 AM'}
-            ]},
-             {c:[{v: 'c'},
-                 {v: 3.0, f: 'Three'},
-                 {v: new Date(2008, 3, 30, 0, 31, 26), f: '4/30/08 12:31 AM'}
-            ]}
-      ],
-      p: {foo: 'hello', bar: 'world!'}
-    }
-    """
-    from collections import defaultdict
-    data = defaultdict(lambda: defaultdict(int))
-    total = 0
-
-    def simplify_record(record):
-        tags = [bucket for bucket in record.template.buckets
-                if bucket['bucket'] == record.bucket][0]['tags']
-        return (record.bucket, record.tokens, tags)
-
-    with Database.connection() as connection:
-        user = USERS.fetch_by_username(username, connection)
-        start = datetime.datetime.strptime(request.args.get('start'), '%Y-%m-%d')
-        end = datetime.datetime.strptime(request.args.get('end'), '%Y-%m-%d')
-        group_by = request.args.get('groupBy')
-        time_window = request.args.get('timeWindow')
-
-        record_list = {}
-        for date in [start + datetime.timedelta(n) for n in range((end - start).days)]:
-            records = RECORDS.fetch_by_user_date(user, date, connection)
-            record_list[date] = records
-
-        slyces = defaultdict(list)
-        for date, records in record_list.iteritems():
-            if time_window == 'week':
-                slyce_grouping = date.isocalendar()[1]
-            elif time_window == 'month':
-                slyce_grouping = date.month
-            else:
-                slyce_grouping = 'period'
-
-            slyces[slyce_grouping] += [simplify_record(record) for record in records]
-
-
-        buckets = set()
-        tags = set()
-
-        for slyce, record_list in slyces.iteritems():
-            for record in record_list:
-                bucket = record[0]
-                record_tags = record[2]
-                buckets.add(bucket)
-                for tag in record_tags:
-                    tags.add(tag)
-
-        cols = [{'label': 'week', 'type': 'number'}]
-        for bucket in buckets:
-            cols.append({'label': bucket, 'type': 'number'})
-
-        rows = []
-        for slyce, record_list in slyces.iteritems():
-            records = {}
-            for record in record_list:
-                total += record[1]
-                if group_by == 'bucket':
-                    records[record[0]] = record[1]
-            cells = [{'v': slyce}]
-            for bucket in buckets:
-                if bucket in records:
-                    cells.append({'v': records[bucket]})
-                else:
-	            cells.append(None)
-            rows.append({'c': cells})
-                    #rows.append({'c': [{'v': slyce}, {'v': record[0]}, {'v': record[1]}]})
-                    #data[slyce][record[0]] += record[1]
-                #elif group_by == 'tag':
-                    #for tag in record[2]:
-                        #rows.append({'c': [{'v': slyce}, {'v': tag}, {'v': record[1]}]})
-                        #data[slyce][tag] += record[1]
-        return jsonify({'cols': cols, 'rows': rows})
-        #return jsonify({'data': data, 'total': total})
-
-
-
