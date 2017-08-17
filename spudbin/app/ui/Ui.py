@@ -15,24 +15,13 @@ from spudbin.storage import Database
 from spudbin.app import app
 from spudbin.app import config
 
+from spudbin.util import authenticated, authorised, admin_only
+
 from spudbin.app.auth.GithubLogin import redirect_to_github
 
 from spudbin.storage import Gifs, Gif
 
 GIFS = Gifs()
-
-def authenticated(func):
-    """Checks that we have a github token - if not, bounce via login to get one"""
-    @wraps(func)
-    def wrapped(*args, **kwargs):
-        """PaRapper the wrapper"""
-        if 'github_auth_token' not in request.cookies or 'github_login' not in request.cookies:
-            session['target_url'] = request.url
-            print 'persisting destination', session['target_url']
-            return redirect_to_github()
-
-        return func(*args, **kwargs)
-    return wrapped
 
 @app.route(config.get('interface', 'application_root') + '/', methods=['GET'])
 def ui_root():
@@ -77,7 +66,19 @@ def availability():
     """Simple availability check."""
     return "Howdy", 200
 
-@app.route('/tokenizer/available', methods=['GET'])
-def availability2():
-    """Simple availability check."""
-    return "Howdy2", 200
+@app.route('/graph', methods=['GET'])
+def graph():
+    """Render the graphs."""
+    username = request.cookies['github_login']
+    tags = request.args.get('tags') if request.args.get('tags') else ''
+    report_url = '%s/api/reports/%s?start=%s&end=%s&groupBy=%s&timeWindow=%s&tags=%s' % (config.get('interface', 'application_root'),
+                                                                                         username,
+                                                                                         request.args.get('start'),
+                                                                                         request.args.get('end'),
+                                                                                         request.args.get('groupBy'),
+                                                                                         request.args.get('timeWindow'),
+                                                                                         tags)
+                                                                                           
+    return render_template('graph.html', username=username,
+                                         report_url = report_url,
+                                         stacked='percent')
