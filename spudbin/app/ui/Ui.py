@@ -70,10 +70,10 @@ def availability():
 @ui_authenticated
 def graph():
     """Render the graphs."""
-    username = request.cookies['github_login']
+    username = request.args.get('usernames') if request.args.get('usernames') else request.cookies['github_login']
     tags = request.args.get('tags') if request.args.get('tags') else ''
     stacked = 'percent' if request.args.get('stacked') == 'percent' else 'true'
-    report_url = '%s/api/reports/%s?start=%s&end=%s&groupBy=%s&timeWindow=%s&tags=%s' % (config.get('interface', 'application_root'),
+    report_url = '%s/api/reports?usernames=%s&start=%s&end=%s&groupBy=%s&timeWindow=%s&tags=%s' % (config.get('interface', 'application_root'),
                                                                                          username,
                                                                                          request.args.get('start'),
                                                                                          request.args.get('end'),

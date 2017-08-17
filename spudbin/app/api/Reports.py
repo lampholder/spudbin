@@ -51,16 +51,17 @@ def simplify_record(record):
                             tags=tags,
                             tokens=record.tokens)
 
-def fetch_simplified_records_for_period(username, start, end):
+def fetch_simplified_records_for_period(usernames, start, end):
     """Returns a dict of dates to arrays of records."""
     with Database.connection() as connection:
-        user = USERS.fetch_by_username(username, connection)
-
         # Fetch all of the tokens for each day in the period.
         record_list = {}
-        for date in [start + datetime.timedelta(n) for n in range((end - start).days)]:
-            records = RECORDS.fetch_by_user_date(user, date, connection)
-            record_list[date] = [simplify_record(record) for record in records]
+        for username in usernames:
+            user = USERS.fetch_by_username(username, connection)
+
+            for date in [start + datetime.timedelta(n) for n in range((end - start).days)]:
+                records = RECORDS.fetch_by_user_date(user, date, connection)
+                record_list[date] = [simplify_record(record) for record in records]
 
         return record_list
 
@@ -79,8 +80,8 @@ def get_tags(records_list):
                 tags.add(tag)
     return tags
 
-@app.route(config.get('interface', 'application_root') + '/api/reports/<string:username>', methods=['GET'])
-def get_stats(username):
+@app.route(config.get('interface', 'application_root') + '/api/reports', methods=['GET'])
+def get_stats():
     """Fetch the aggregated stats over a period."""
     start = datetime.datetime.strptime(request.args.get('start'), '%Y-%m-%d')
     end = datetime.datetime.strptime(request.args.get('end'), '%Y-%m-%d')
@@ -96,8 +97,10 @@ def get_stats(username):
 
     tags_to_filter = request.args.get('tags').split(',') if request.args.get('tags') else None
 
+    usernames = request.args.get('usernames').split(',') if request.args.get('usernames') else None
+
     # Fetch the data from the db
-    records_list = fetch_simplified_records_for_period(username, start, end)
+    records_list = fetch_simplified_records_for_period(usernames, start, end)
 
     # Set up the data table columns
     cols = [{'label': 'date', 'type': 'date'}]
