@@ -15,7 +15,7 @@ from spudbin.storage import Database
 from spudbin.app import app
 from spudbin.app import config
 
-from spudbin.util import authenticated, authorised, admin_only
+from spudbin.util.Auth import ui_authenticated, authorised, admin_only
 
 from spudbin.app.auth.GithubLogin import redirect_to_github
 
@@ -39,7 +39,7 @@ def interpolated_css(filename):
 
 @app.route(config.get('interface', 'application_root') + '/submit', defaults={'tokendate': None}, methods=['GET'])
 @app.route(config.get('interface', 'application_root') + '/submit/<date:tokendate>', methods=['GET'])
-@authenticated
+@ui_authenticated
 def ui_submit_tokens(tokendate):
     """UI for submitting tokens"""
     username = request.cookies['github_login']
@@ -67,7 +67,7 @@ def availability():
     return "Howdy", 200
 
 @app.route(config.get('interface', 'application_root') + '/graph', methods=['GET'])
-@authenticated
+@ui_authenticated
 def graph():
     """Render the graphs."""
     username = request.cookies['github_login']

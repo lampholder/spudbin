@@ -3,9 +3,12 @@ from functools import wraps
 import requests
 
 from flask import request
+from flask import session
+
+from spudbin.app.auth.GithubLogin import redirect_to_github
 
 # Auth decorators
-def authenticated(func):
+def api_authenticated(func):
     """Only checks that this person is who they say they are"""
     @wraps(func)
     def wrapped(*args, **kwargs):
@@ -13,20 +16,32 @@ def authenticated(func):
         username = request.headers.get('Github-Login')
         token = request.headers.get('Github-Auth-Token')
        
-        if username is None:
-            username = request.cookies.get('github_login')
-        if token is None:
-            token = request.cookies.get('github_auth_token')
-
-        auth_test = requests.get('https://api.github.com/user',
-                                 params={'access_token': token})
-
-        is_authed = (auth_test.status_code == 200 and
-                     'login' in auth_test.json() and
-                     auth_test.json()['login'] == username)
-        if not is_authed:
+        if not is_authentic(username, token):
             return 'I don\'t know who you are, or I don\'t believe you are ' + \
                    'who you say you are.', 401
+        return func(*args, **kwargs)
+    return wrapped
+
+def is_authentic(username, token):
+    auth_test = requests.get('https://api.github.com/user',
+                             params={'access_token': token})
+
+    is_authenticated = (auth_test.status_code == 200 and
+                       'login' in auth_test.json() and
+                       auth_test.json()['login'] == username)
+    return is_authenticated
+
+def ui_authenticated(func):
+    """Only checks that this person is who they say they are"""
+    @wraps(func)
+    def wrapped(*args, **kwargs):
+        """Wrapper function, obvs"""
+        username = request.cookies.get('github_login')
+        token = request.cookies.get('github_auth_token')
+
+        if not is_authentic(username, token):
+            session['target_url'] = request.url
+            return redirect_to_github()
         return func(*args, **kwargs)
     return wrapped
 
