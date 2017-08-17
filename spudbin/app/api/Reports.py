@@ -1,3 +1,5 @@
+"""Stop losing this link: https://developers.google.com/chart/interactive/docs/reference"""
+
 import datetime
 
 from collections import defaultdict
@@ -24,6 +26,23 @@ ASSOCIATIONS = Associations()
 RECORDS = Records()
 
 SimplifiedRecord = namedtuple('SimplifiedRecord', ['bucket', 'tags', 'tokens'])
+
+class JSDate(object):
+    """Flask's Jsonify can have specific obj->json mapping impls specified on a
+    type-by-type basis only. For that reason, the report code is wrapping dates
+    in a JSDate class so that only the JSDate dates will be mapped to the 
+    "Date(2010, 10, 0)" format required by Google Charts. Everything else can
+    remain in 2010-10-01 format unmolested."""
+
+    def __init__(self, date):
+        self.date = date
+
+    def __eq__(self, other):
+        return self.date == other.date
+
+    def __hash__(self):
+        return hash(self.date)
+    
 
 def simplify_record(record):
     tags = [bucket for bucket in record.template.buckets
@@ -81,7 +100,7 @@ def get_stats(username):
     records_list = fetch_simplified_records_for_period(username, start, end)
 
     # Set up the data table columns
-    cols = [{'label': 'week', 'type': 'number'}]
+    cols = [{'label': 'date', 'type': 'date'}]
     if group_by == 'tag':
         groups = get_tags(records_list)
         if tags_to_filter is not None:
@@ -94,14 +113,14 @@ def get_stats(username):
 
     # Slice the data by period
     period = 'period'
-    period_map = lambda x: -1
+    period_map = lambda x: JSDate(start)
 
     if time_window == 'week':
         period = 'week'
-        period_map = lambda x: x.isocalendar()[1]
+        period_map = lambda x: JSDate(datetime.datetime.strptime('%s-W%s-1' % (x.year, x.isocalendar()[1]), '%Y-W%W-%w').date())
     elif time_window == 'month':
         period = 'month'
-        period_map = lambda x: x.month
+        period_map = lambda x: JSDate(datetime.date(x.year, x.month, 1))
 
     periods = defaultdict(list)
     for date, records in records_list.iteritems():
