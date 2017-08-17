@@ -12,6 +12,11 @@ def authenticated(func):
         """Wrapper function, obvs"""
         username = request.headers.get('Github-Login')
         token = request.headers.get('Github-Auth-Token')
+       
+        if username is None:
+            username = request.cookies.get('github_login')
+        if token is None:
+            token = request.cookies.get('github_auth_token')
 
         auth_test = requests.get('https://api.github.com/user',
                                  params={'access_token': token})
