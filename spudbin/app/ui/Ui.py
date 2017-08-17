@@ -66,11 +66,13 @@ def availability():
     """Simple availability check."""
     return "Howdy", 200
 
-@app.route('/graph', methods=['GET'])
+@app.route(config.get('interface', 'application_root') + '/graph', methods=['GET'])
+@authenticated
 def graph():
     """Render the graphs."""
     username = request.cookies['github_login']
     tags = request.args.get('tags') if request.args.get('tags') else ''
+    stacked = 'percent' if request.args.get('stacked') == 'percent' else 'true'
     report_url = '%s/api/reports/%s?start=%s&end=%s&groupBy=%s&timeWindow=%s&tags=%s' % (config.get('interface', 'application_root'),
                                                                                          username,
                                                                                          request.args.get('start'),
@@ -81,4 +83,4 @@ def graph():
                                                                                            
     return render_template('graph.html', username=username,
                                          report_url = report_url,
-                                         stacked='percent')
+                                         stacked=stacked)
