@@ -10,13 +10,12 @@ from flask import request
 
 from spudbin.app import app
 from spudbin.app import config
-from spudbin.app import admins
 
 from spudbin.storage import Database
 from spudbin.storage import Users
-from spudbin.storage import Templates, Template
-from spudbin.storage import Records, Record
-from spudbin.storage import Associations, Association
+from spudbin.storage import Templates
+from spudbin.storage import Records
+from spudbin.storage import Associations
 
 CONNECTION = Database.connection()
 
@@ -30,7 +29,7 @@ SimplifiedRecord = namedtuple('SimplifiedRecord', ['bucket', 'tags', 'tokens'])
 class JSDate(object):
     """Flask's Jsonify can have specific obj->json mapping impls specified on a
     type-by-type basis only. For that reason, the report code is wrapping dates
-    in a JSDate class so that only the JSDate dates will be mapped to the 
+    in a JSDate class so that only the JSDate dates will be mapped to the
     "Date(2010, 10, 0)" format required by Google Charts. Everything else can
     remain in 2010-10-01 format unmolested."""
 
@@ -42,9 +41,10 @@ class JSDate(object):
 
     def __hash__(self):
         return hash(self.date)
-    
+
 
 def simplify_record(record):
+    """Create an object that's simpler to reason about."""
     tags = [bucket for bucket in record.template.buckets
             if bucket['bucket'] == record.bucket][0]['tags']
     return SimplifiedRecord(bucket=record.bucket,
@@ -66,15 +66,17 @@ def fetch_simplified_records_for_period(usernames, start, end):
         return record_list
 
 def get_buckets(records_list):
+    """Distills the full results set into a set of buckets"""
     buckets = set()
-    for date, records in records_list.iteritems():
+    for _, records in records_list.iteritems():
         for record in records:
             buckets.add(record.bucket)
     return buckets
 
 def get_tags(records_list):
+    """Distills the full results set into a set of tags"""
     tags = set()
-    for date, records in records_list.iteritems():
+    for _, records in records_list.iteritems():
         for record in records:
             for tag in record.tags:
                 tags.add(tag)
@@ -83,17 +85,20 @@ def get_tags(records_list):
 @app.route(config.get('interface', 'application_root') + '/api/reports', methods=['GET'])
 def get_stats():
     """Fetch the aggregated stats over a period."""
+    # FIXME: This method is a beast.
     start = datetime.datetime.strptime(request.args.get('start'), '%Y-%m-%d')
     end = datetime.datetime.strptime(request.args.get('end'), '%Y-%m-%d')
 
     group_by = request.args.get('groupBy')
     if group_by not in ('tag', 'bucket'):
-        return jsonify({'error': 'Invalid groupBy setting; should be either \'tag\' or \'bucket\''}), 400
+        return jsonify({'error':
+                        'Invalid groupBy setting; should be either \'tag\' or \'bucket\''}), 400
 
     time_window = request.args.get('timeWindow')
     if time_window not in ('week', 'month', 'period'):
-        return jsonify({'error': 
-                        'Invalid timeWindow setting; should be either \'week\', \'month\' or \'period\''}), 400
+        return jsonify({'error':
+                        ('Invalid timeWindow setting; ' +
+                         'should be either \'week\', \'month\' or \'period\'')}), 400
 
     tags_to_filter = request.args.get('tags').split(',') if request.args.get('tags') else None
 
@@ -120,7 +125,9 @@ def get_stats():
 
     if time_window == 'week':
         period = 'week'
-        period_map = lambda x: JSDate(datetime.datetime.strptime('%s-W%s-1' % (x.year, x.isocalendar()[1]), '%Y-W%W-%w').date())
+        period_map = lambda x: JSDate(datetime.datetime.strptime('%s-W%s-1' %
+                                                                 (x.year, x.isocalendar()[1]),
+                                                                 '%Y-W%W-%w').date())
     elif time_window == 'month':
         period = 'month'
         period_map = lambda x: JSDate(datetime.date(x.year, x.month, 1))
@@ -139,7 +146,7 @@ def get_stats():
             elif group_by == 'tag':
                 for tag in record.tags:
                     if tags_to_filter is None or tag in tags_to_filter:
-                        tokens[tag] += record.tokens 
+                        tokens[tag] += record.tokens
 
         cells = [{'v': period}]
         for group in groups:

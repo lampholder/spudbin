@@ -1,15 +1,14 @@
+"""API methods, exposed over HTTP"""
 import datetime
-
-from functools import wraps
 
 from flask import jsonify
 from flask import request
 
 from spudbin.app import app
 from spudbin.app import config
-from spudbin.app import admins
 
-from spudbin.util.Auth import api_authenticated, authorised, admin_only
+from spudbin.app.auth import GitHubAPIAuthenticator
+from spudbin.app.auth import SpudbinAuthoriser
 
 from spudbin.storage import Database
 from spudbin.storage import Users
@@ -34,15 +33,16 @@ def filter_keys(dic, keys):
 
 # Templates:
 @app.route(config.get('interface', 'application_root') + '/api/templates', methods=['GET'])
-@api_authenticated
-@admin_only
+@GitHubAPIAuthenticator.authenticated
+@SpudbinAuthoriser.admin_only
 def get_templates():
+    """Return all the templates stored within the system."""
     with Database.connection() as connection:
         return jsonify([x._asdict() for x in TEMPLATES.all(connection)])
 
 @app.route(config.get('interface', 'application_root') + "/api/templates", methods=['POST'])
-@api_authenticated
-@admin_only
+@GitHubAPIAuthenticator.authenticated
+@SpudbinAuthoriser.admin_only
 def create_template():
     """Upload a new template"""
     with Database.connection() as connection:
@@ -59,16 +59,18 @@ def create_template():
         return jsonify(TEMPLATES.fetch_by_pkey(row_id, connection)._asdict())
 
 @app.route(config.get('interface', 'application_root') + "/api/templates/<int:template_id>", methods=['GET'])
-@api_authenticated
+@GitHubAPIAuthenticator.authenticated
 def get_template_by_id(template_id):
+    """Return a single template referenced by its id"""
     with Database.connection() as connection:
         return jsonify(TEMPLATES.fetch_by_pkey(template_id, connection)._asdict())
 
 # User templates:
 @app.route(config.get('interface', 'application_root') + '/api/<string:username>/templates', methods=['GET'])
-@api_authenticated
-@authorised
+@GitHubAPIAuthenticator.authenticated
+@SpudbinAuthoriser.authorised
 def get_templates_for_user(username):
+    """Return all the templates associated with this user."""
     with Database.connection() as connection:
         user = USERS.fetch_by_username(username, connection)
         #TODO: This chap only _asdict()ifies the first entity - all the children remain namedtuples
@@ -77,8 +79,8 @@ def get_templates_for_user(username):
                         for x in ASSOCIATIONS.fetch_by_user(user, connection)])
 
 @app.route(config.get('interface', 'application_root') + '/api/<string:username>/templates/<int:template_id>', methods=['POST'])
-@api_authenticated
-@authorised
+@GitHubAPIAuthenticator.authenticated
+@SpudbinAuthoriser.authorised
 def assign_template_for_user(username, template_id):
     with Database.connection() as connection:
         start_date = datetime.datetime.strptime(request.get_json()['startDate'], '%Y-%m-%d').date()
@@ -97,8 +99,8 @@ def assign_template_for_user(username, template_id):
                         'message': 'Template assigned successfully'})
 
 @app.route(config.get('interface', 'application_root') + "/api/<string:username>/templates/<date:date>", methods=['GET'])
-@api_authenticated
-@authorised
+@GitHubAPIAuthenticator.authenticated
+@SpudbinAuthoriser.authorised
 def get_template_by_user_date(username, date):
     with Database.connection() as connection:
         user = USERS.fetch_by_username(username, connection)
@@ -106,8 +108,8 @@ def get_template_by_user_date(username, date):
         return jsonify(association.template._asdict())
 
 @app.route(config.get('interface', 'application_root') + "/api/<string:username>/tokens/<date:date>", methods=['POST'])
-@api_authenticated
-@authorised
+@GitHubAPIAuthenticator.authenticated
+@SpudbinAuthoriser.authorised
 def submit_tokens(username, date):
     """Submit tokens for a given day; they are automatically associated with the
     current active template."""
@@ -141,8 +143,8 @@ def submit_tokens(username, date):
                                     for x in RECORDS.fetch_by_user_date(user, date, connection)]})
 
 @app.route(config.get('interface', 'application_root') + "/api/<string:username>/tokens/<date:date>", methods=['GET'])
-@api_authenticated
-@authorised
+@GitHubAPIAuthenticator.authenticated
+@SpudbinAuthoriser.authorised
 def get_tokens(username, date):
     """Fetch the tokens submitted for a given day, plus the template against which they
     were submitted."""

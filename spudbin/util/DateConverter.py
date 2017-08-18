@@ -1,3 +1,4 @@
+"""Custom input converter."""
 from datetime import datetime
 from werkzeug.routing import BaseConverter, ValidationError
 

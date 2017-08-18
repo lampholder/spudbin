@@ -6,6 +6,7 @@ import sys
 from flask import Flask
 
 from spudbin.util import DateConverter
+from spudbin.util import CustomJSONEncoder
 
 #TODO: This really doesn't feel like it should be here :(
 if len(sys.argv) != 2:
@@ -23,23 +24,6 @@ app = Flask(__name__,
             static_folder='static')
 
 app.url_map.converters['date'] = DateConverter
-
-from flask.json import JSONEncoder
-from datetime import date
-from spudbin.app.api.Reports import JSDate
-
-class CustomJSONEncoder(JSONEncoder):
-
-    def default(self, obj):
-        try:
-            if isinstance(obj, JSDate):
-                return 'Date(%d, %d, %d)' % (obj.date.year, obj.date.month - 1, obj.date.day)
-            iterable = iter(obj)
-        except TypeError:
-            pass
-        else:
-            return list(iterable)
-        return JSONEncoder.default(self, obj)
 
 app.json_encoder = CustomJSONEncoder
 
