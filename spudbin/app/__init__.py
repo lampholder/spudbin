@@ -10,7 +10,7 @@ from spudbin.util import CustomJSONEncoder
 
 #TODO: This really doesn't feel like it should be here :(
 if len(sys.argv) != 2:
-    sys.stderr.write('No config file filename provided; please run: python run.py <config_filename>')
+    sys.stderr.write('No config file filename provided; please run: python run.py <config_filename>\n')
     exit(1)
 config_file = sys.argv[1]
 
