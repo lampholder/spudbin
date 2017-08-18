@@ -80,12 +80,16 @@ def get_who_has_tokenized():
     rows = []
 
     with Database.connection() as connection:
+        weekend = set([5, 6])
         for date in [start + datetime.timedelta(n) for n in range((end - start).days)]:
+            if date.weekday() in weekend:
+                continue
             cells = [{'v': JSDate(date)}]
             for username in usernames:
                 # FIXME: This is inefficient.
                 user = USERS.fetch_by_username(username, connection)
-                records = [simplify_record(x) for x in RECORDS.fetch_by_user_date(user, date, connection)]
+                records = [simplify_record(x)
+                           for x in RECORDS.fetch_by_user_date(user, date, connection)]
                 total = sum([x.tokens for x in records])
                 cells.append({'v': total})
             rows.append({'c': cells})
