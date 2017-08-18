@@ -66,6 +66,19 @@ def availability():
     """Simple availability check."""
     return "Howdy", 200
 
+@app.route(config.get('interface', 'application_root') + '/whoHasTokenized', methods=['GET'])
+def who_has_tokenized():
+    """Render the graphs."""
+    usernames = request.args.get('usernames')
+    report_url = ('%s/api/whoHasTokenized?usernames=%s&start=%s&end=%s'
+                  % (config.get('interface', 'application_root'),
+                     usernames,
+                     request.args.get('start'),
+                     request.args.get('end')))
+
+    return render_template('who_has_tokenized.html',
+                           report_url=report_url)
+
 @app.route(config.get('interface', 'application_root') + '/graph', methods=['GET'])
 @GitHubUIAuthenticator.authenticated
 def graph():

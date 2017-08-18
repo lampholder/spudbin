@@ -13,8 +13,8 @@
 
     function drawChart() {
       var jsonData = $.ajax({
-          //url: "{{report_url | safe}}",
-          url: 'https://matrix.org/tokenizer/api/reports/health?start=2017-07-18&end=2017-08-18&usernames=lampholder,dbkr,Kegsay,NegativeMjark,lukebarnard1,richvdh,superdump,erikjohnston',
+          url: "{{report_url | safe}}",
+          //url: 'https://matrix.org/tokenizer/api/reports/health?start=2017-07-18&end=2017-08-18&usernames=lampholder,dbkr,Kegsay,NegativeMjark,lukebarnard1,richvdh,superdump,erikjohnston',
           dataType: "json",
           async: false
           }).responseText;
@@ -25,13 +25,7 @@
       // Instantiate and draw our chart, passing in some options.
       var chart = new google.visualization.Table(document.getElementById('chart_div'));
 
-      var options = {
-      //  title: '{{username}}',
-      //  isStacked: '{{stacked}}',
-      //  width: 1000,
-      //  height: 600
-      };
-      chart.draw(data, options);
+      chart.draw(data);
     }
 
     </script>

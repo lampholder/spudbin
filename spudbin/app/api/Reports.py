@@ -67,8 +67,8 @@ def get_tags(records_list):
                 tags.add(tag)
     return tags
 
-@app.route(config.get('interface', 'application_root') + '/api/reports/health', methods=['GET'])
-def get_data_health():
+@app.route(config.get('interface', 'application_root') + '/api/reports/whoHasTokenized', methods=['GET'])
+def get_who_has_tokenized():
     """Fetch a list of days and who has completed their tokens for those days."""
     start = datetime.datetime.strptime(request.args.get('start'), '%Y-%m-%d')
     end = datetime.datetime.strptime(request.args.get('end'), '%Y-%m-%d')
