@@ -73,7 +73,7 @@ def get_data_health():
     start = datetime.datetime.strptime(request.args.get('start'), '%Y-%m-%d')
     end = datetime.datetime.strptime(request.args.get('end'), '%Y-%m-%d')
 
-    usernames = request._args.get('usernames').split(',')
+    usernames = request.args.get('usernames').split(',')
 
     cols = [{'label': 'date', 'type': 'date'}]
     cols += [{'lable': x, 'type': 'string'} for x in usernames]
