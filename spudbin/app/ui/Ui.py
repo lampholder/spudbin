@@ -1,5 +1,6 @@
 """All the UI gubbins"""
 from datetime import date
+from datetime import timedelta
 
 from flask import request
 from flask import redirect
@@ -70,11 +71,13 @@ def availability():
 def who_has_tokenized():
     """Render the graphs."""
     usernames = request.args.get('usernames')
+    start = request.args.get('start') if request.args.get('start') else date.today() - timedelta(days=7)
+    end = request.args.get('end') if request.args.get('end') else date.today()
     report_url = ('%s/api/reports/whoHasTokenized?usernames=%s&start=%s&end=%s'
                   % (config.get('interface', 'application_root'),
                      usernames,
-                     request.args.get('start'),
-                     request.args.get('end')))
+                     start,
+                     end))
 
     return render_template('who_has_tokenized.html',
                            report_url=report_url)
