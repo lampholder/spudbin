@@ -67,6 +67,33 @@ def get_tags(records_list):
                 tags.add(tag)
     return tags
 
+@app.route(config.get('interface', 'application_root') + '/api/reports/health', methods=['GET'])
+def get_data_health():
+    """Fetch a list of days and who has completed their tokens for those days."""
+    start = datetime.datetime.strptime(request.args.get('start'), '%Y-%m-%d')
+    end = datetime.datetime.strptime(request.args.get('end'), '%Y-%m-%d')
+
+    usernames = request._args.get('usernames').split(',')
+
+    cols = [{'label': 'date', 'type': 'date'}]
+    cols += [{'lable': x, 'type': 'string'} for x in usernames]
+    rows = []
+
+    with Database.connection() as connection:
+        for date in [start + datetime.timedelta(n) for n in range((end - start).days)]:
+            cells = [{'v': JSDate(date)}]
+            for username in usernames:
+                # FIXME: This is inefficient.
+                user = USERS.fetch_by_username(username, connection)
+                records = [simplify_record(x) for x in RECORDS.fetch_by_user_date(user, date, connection)]
+                total = sum([x.tokens for x in records])
+                cells.append({'v': total})
+            rows.append(cells)
+
+        return jsonify({'cols': cols,
+                        'rows': rows})
+
+
 @app.route(config.get('interface', 'application_root') + '/api/reports', methods=['GET'])
 def get_stats():
     """Fetch the aggregated stats over a period."""
