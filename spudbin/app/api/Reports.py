@@ -88,7 +88,7 @@ def get_data_health():
                 records = [simplify_record(x) for x in RECORDS.fetch_by_user_date(user, date, connection)]
                 total = sum([x.tokens for x in records])
                 cells.append({'v': total})
-            rows.append(cells)
+            rows.append({'c': cells})
 
         return jsonify({'cols': cols,
                         'rows': rows})
