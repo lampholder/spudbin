@@ -86,6 +86,7 @@ def get_who_has_tokenized():
                 continue
             cells = [{'v': JSDate(date)}]
             for username in usernames:
+                print 'Fetching username: ', username
                 # FIXME: This is inefficient.
                 user = USERS.fetch_by_username(username, connection)
                 records = [simplify_record(x)
