@@ -70,7 +70,7 @@ def availability():
 def who_has_tokenized():
     """Render the graphs."""
     usernames = request.args.get('usernames')
-    report_url = ('%s/api/whoHasTokenized?usernames=%s&start=%s&end=%s'
+    report_url = ('%s/api/reports/whoHasTokenized?usernames=%s&start=%s&end=%s'
                   % (config.get('interface', 'application_root'),
                      usernames,
                      request.args.get('start'),
