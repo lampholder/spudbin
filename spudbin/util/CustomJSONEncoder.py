@@ -1,6 +1,6 @@
 """Custom JSON Encoder"""
 from flask.json import JSONEncoder
-from spudbin.app.api.Reports import JSDate
+from spudbin.util import JSDate
 
 class CustomJSONEncoder(JSONEncoder):
     """Custom JSON encoder replaceing JSDates (a custom type created specifically for this
