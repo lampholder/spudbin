@@ -71,8 +71,8 @@ def availability():
 def who_has_tokenized():
     """Render the graphs."""
     usernames = request.args.get('usernames')
-    start = request.args.get('start') if request.args.get('start') else date.today() - timedelta(days=7)
-    end = request.args.get('end') if request.args.get('end') else date.today()
+    start = request.args.get('start') if request.args.get('start') else date.today() - timedelta(days=6)
+    end = request.args.get('end') if request.args.get('end') else date.today() + timedelta(days=1)
     report_url = ('%s/api/reports/whoHasTokenized?usernames=%s&start=%s&end=%s'
                   % (config.get('interface', 'application_root'),
                      usernames,
