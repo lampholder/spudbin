@@ -76,7 +76,7 @@ def get_data_health():
     usernames = request.args.get('usernames').split(',')
 
     cols = [{'label': 'date', 'type': 'date'}]
-    cols += [{'lable': x, 'type': 'string'} for x in usernames]
+    cols += [{'label': x, 'type': 'string'} for x in usernames]
     rows = []
 
     with Database.connection() as connection:
