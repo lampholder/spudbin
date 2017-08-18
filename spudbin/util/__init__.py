@@ -1,2 +1,2 @@
 from spudbin.util.DateConverter import DateConverter
-from spudbin.util.CustomJSONEncorder import CustomJSONEncoder
+from spudbin.util.CustomJSONEncoder import CustomJSONEncoder
