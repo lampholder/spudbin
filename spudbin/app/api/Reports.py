@@ -40,13 +40,13 @@ def fetch_simplified_records_for_period(usernames, start, end):
     """Returns a dict of dates to arrays of records."""
     with Database.connection() as connection:
         # Fetch all of the tokens for each day in the period.
-        record_list = {}
+        record_list = defaultdict(list)
         for username in usernames:
             user = USERS.fetch_by_username(username, connection)
 
             for date in [start + datetime.timedelta(n) for n in range((end - start).days)]:
                 records = RECORDS.fetch_by_user_date(user, date, connection)
-                record_list[date] = [simplify_record(record) for record in records]
+                record_list[date] += [simplify_record(record) for record in records]
 
         return record_list
 
