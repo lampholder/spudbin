@@ -20,7 +20,7 @@ div.header img, div.header h1 {
 table {
     font-family: monospace;
     font-size: 1.1em;
-    border: 1px solid grey;
+    border: 10px solid grey;
 }
 span.bucket {
     cursor: pointer;
