@@ -36,11 +36,15 @@ def interpolated_css(filename):
                                application_root=config.get('interface', 'application_root'))
     abort(404)
 
-@app.route(config.get('interface', 'application_root') + '/admin/review/<string:username>', methods=['GET'])
+@app.route(config.get('interface', 'application_root') + '/admin/review/<string:username>/<date:tokendate>', methods=['GET'])
+@app.route(config.get('interface', 'application_root') + '/admin/review/<string:username>', defaults={'tokendate': None}, methods=['GET'])
 @GitHubUIAuthenticator.authenticated
-def ui_review_template(username):
+def ui_review_template(username, tokendate):
     """Admin UI for reviewing other users' current template."""
-    return render_template('submit.html', username=username, date=date.today())
+    if tokendate is None:
+        tokendate = date.today()
+    return render_template('review.html', username=username, date=tokendate,
+                           application_root=config.get('interface', 'application_root'))
 
 @app.route(config.get('interface', 'application_root') + '/submit', defaults={'tokendate': None}, methods=['GET'])
 @app.route(config.get('interface', 'application_root') + '/submit/<date:tokendate>', methods=['GET'])

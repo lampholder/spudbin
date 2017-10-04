@@ -1,0 +1,116 @@
+<script src="https://code.jquery.com/jquery-3.2.1.js" integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE=" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/jquery.cookie/1.4.1/jquery.cookie.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://code.jquery.com/ui/1.12.1/themes/cupertino/jquery-ui.css">
+
+<link rel="stylesheet" type="text/css" href="{{application_root}}/interpolated/submit.css">
+
+<h1>Viewing template for {{username}}!</h1>
+<h2>As was active on <input type="text" id="date" value="{{date}}" /></h2>
+
+<table id="tokens">
+</table>
+
+<script type="text/javascript">
+
+$( document ).ready(function() {
+    var totalTokens = 0;
+    var datepicker = $('input[type=text]#date').datepicker({dateFormat: 'yy-mm-dd'});
+
+    var username = '{{username}}' /* Injected from pythonland */
+
+    var makeCellFromLayoutCell = function(layoutCell, maxTokens) {
+        if (layoutCell.type == 'text') {
+            return $('<td>' + layoutCell.value + '</td>');
+        }
+        else if (layoutCell.type == 'heading') {
+            return $('<th>' + layoutCell.value + '</th>');
+        }
+        else if (layoutCell.type == 'bucket') {
+            var cell = $('<td></td>');
+            cell.disableSelection();
+            var element = $('<span class=\'bucket\' id=\'' + layoutCell.value + '\'>');
+            var tokon = $('<span class=\'on\'>');
+            var tokoff = $('<span class=\'off\'>');
+            var value = 0;
+            $(element).data('set', function(newValue) {
+                if (   typeof(newValue) === 'number'
+                    && (newValue % 1) === 0
+                    && newValue >= 0
+                    && totalTokens - value + newValue <= maxTokens) {
+                    totalTokens -= value;
+                    totalTokens += newValue;
+                    value = newValue;
+                    tokon.html(new Array(newValue + 1).join('O'));
+                    tokoff.html(new Array((maxTokens - newValue) + 1).join('O'));
+                }
+            });
+            $(element).data('get', function() {
+                return value;
+            });
+            $(element).data('set')(0);
+            cell.click(function() {
+                $(element).data('set')(value + 1);
+                return false;
+            });
+            cell.contextmenu(function (){
+                $(element).data('set')(value - 1);
+                return false;
+            });
+            element.append(tokon);
+            element.append(tokoff);
+            cell.append(element);
+            return cell;
+        }
+    };
+    var makeRowFromLayoutRow = function(layoutRow, maxTokens) {
+        var row = $('<tr>');
+        layoutRow.forEach(function(entry) {
+            row.append(makeCellFromLayoutCell(entry, maxTokens));
+        });
+        return row;
+    };
+    var loadTable = function() {
+        totalTokens = 0;
+        var table = $('table#tokens');
+        table.empty();
+        $.ajax({
+            beforeSend: function(request) {
+                            request.setRequestHeader('Github-Login', $.cookie('github_login'));
+                            request.setRequestHeader('Github-Auth-Token', $.cookie('github_auth_token'));
+            },
+            url: '{{application_root}}/api/' + username + '/tokens/' + $('input[type=text]#date').val(),
+            success: function(data, status) {
+                         var maxTokens = data.template.maxTokens;
+                         data.template.layout.forEach(function(entry) {
+                             table.append(makeRowFromLayoutRow(entry, maxTokens));
+                         });
+                         data.tokens.forEach(function(entry) {
+                             $('span#' + entry.bucket).data('set')(entry.tokens);
+                         });
+                     },
+            error: function() {
+                $.ajax({
+                    beforeSend: function(request) {
+                                    request.setRequestHeader('Github-Login', $.cookie('github_login'));
+                                    request.setRequestHeader('Github-Auth-Token', $.cookie('github_auth_token'));
+                    },
+                    url: '{{application_root}}/api/' + username + '/templates/' + $('input[type=text]#date').val(),
+                    success: function(data, status) {
+                        var maxTokens = data.maxTokens;
+                        data.layout.forEach(function(entry) {
+                            table.append(makeRowFromLayoutRow(entry, maxTokens));
+                        });
+                    }
+                });
+          }
+        });
+    };
+    loadTable();
+    datepicker.on('change', function() {
+        window.history.pushState($(this).val(), '', '{{application_root}}/admin/review/' + username + '/' + $(this).val());
+        loadTable();
+    });
+});
+
+</script>
