@@ -39,11 +39,19 @@ def interpolated_css(filename):
 @app.route(config.get('interface', 'application_root') + '/admin/review/<string:username>/<date:tokendate>', methods=['GET'])
 @app.route(config.get('interface', 'application_root') + '/admin/review/<string:username>', defaults={'tokendate': None}, methods=['GET'])
 @GitHubUIAuthenticator.authenticated
-def ui_review_template(username, tokendate):
+def ui_review_user_template(username, tokendate):
     """Admin UI for reviewing other users' current template."""
     if tokendate is None:
         tokendate = date.today()
     return render_template('review.html', username=username, date=tokendate,
+                           application_root=config.get('interface', 'application_root'))
+
+@app.route(config.get('interface', 'application_root') + '/admin/templates/<int:templateid>', methods=['GET'])
+@GitHubUIAuthenticator.authenticated
+def ui_view_template(templateid):
+    """Admin UI for viewing a template"""
+    return render_template('template.html',
+                           template_id=templateid, 
                            application_root=config.get('interface', 'application_root'))
 
 @app.route(config.get('interface', 'application_root') + '/submit', defaults={'tokendate': None}, methods=['GET'])

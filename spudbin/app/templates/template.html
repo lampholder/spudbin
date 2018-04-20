@@ -1,0 +1,56 @@
+<script src="https://code.jquery.com/jquery-3.2.1.js" integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE=" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/jquery.cookie/1.4.1/jquery.cookie.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://code.jquery.com/ui/1.12.1/themes/cupertino/jquery-ui.css">
+
+<link rel="stylesheet" type="text/css" href="{{application_root}}/interpolated/submit.css">
+
+<table id="tokens">
+</table>
+
+<script type="text/javascript">
+
+$( document ).ready(function() {
+    var totalTokens = 0;
+    var datepicker = $('input[type=text]#date').datepicker({dateFormat: 'yy-mm-dd'});
+    var makeCellFromLayoutCell = function(layoutCell, maxTokens) {
+        if (layoutCell.type == 'text') {
+            return $('<td>text("' + layoutCell.value + '")</td>');
+        }
+        else if (layoutCell.type == 'heading') {
+            return $('<th>heading("' + layoutCell.value + '")</th>');
+        }
+        else if (layoutCell.type == 'bucket') {
+            var cell = $('<td>bucket("' + layoutCell.value + '")</td>');
+            return cell;
+        }
+    };
+    var makeRowFromLayoutRow = function(layoutRow, maxTokens) {
+        var row = $('<tr>');
+        layoutRow.forEach(function(entry) {
+            row.append(makeCellFromLayoutCell(entry, maxTokens));
+        });
+        return row;
+    };
+    var loadTable = function() {
+        totalTokens = 0;
+        var table = $('table#tokens');
+        table.empty();
+        $.ajax({
+            beforeSend: function(request) {
+                            request.setRequestHeader('Github-Login', $.cookie('github_login'));
+                            request.setRequestHeader('Github-Auth-Token', $.cookie('github_auth_token'));
+            },
+            url: '{{application_root}}/api/templates/{{template_id}}',
+            success: function(data, status) {
+                         var maxTokens = data.maxTokens;
+                         data.layout.forEach(function(entry) {
+                             table.append(makeRowFromLayoutRow(entry, maxTokens));
+                         });
+                     },
+        });
+    };
+    loadTable();
+});
+
+</script>
